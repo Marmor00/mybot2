@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-INSIDER TRADING RESEARCH APP
-Integra scraper + research assistant en una app web
+INSIDER TRADING RESEARCH APP V2
+Integra whale detection + stage analysis + momentum tracking
 """
 from flask import Flask, render_template, jsonify, request, send_file
 import pandas as pd
@@ -26,7 +26,8 @@ class InsiderTradingApp:
         self.scrape_progress = ""
         
         # Archivos de datos
-        self.opportunities_file = self.data_dir / "insider_opportunities.csv"
+        self.opportunities_file = self.data_dir / "insider_opportunities.csv"  # Clusters
+        self.whale_file = self.data_dir / "whale_opportunities.csv"           # Whales
         self.research_file = self.data_dir / "weekly_research_report.json"
         
     def get_system_status(self):
@@ -35,6 +36,7 @@ class InsiderTradingApp:
             'is_scraping': self.is_scraping,
             'last_scrape': self.last_scrape_time,
             'has_opportunities': self.opportunities_file.exists(),
+            'has_whales': self.whale_file.exists(),
             'has_research': self.research_file.exists(),
             'progress': self.scrape_progress
         }
@@ -75,11 +77,19 @@ class InsiderTradingApp:
             self.is_scraping = False
     
     def get_opportunities(self):
-        """Obtiene oportunidades del scraper"""
+        """Obtiene cluster opportunities del scraper"""
         if not self.opportunities_file.exists():
             return []
         
         df = pd.read_csv(self.opportunities_file)
+        return df.to_dict('records')
+    
+    def get_whale_opportunities(self):
+        """Obtiene whale opportunities del scraper"""
+        if not self.whale_file.exists():
+            return []
+        
+        df = pd.read_csv(self.whale_file)
         return df.to_dict('records')
     
     def get_research_data(self):
@@ -89,6 +99,19 @@ class InsiderTradingApp:
         
         with open(self.research_file, 'r') as f:
             return json.load(f)
+    
+    def get_opportunities_by_stage(self, stage=None):
+        """Obtiene opportunities filtradas por stage"""
+        research_data = self.get_research_data()
+        if not research_data:
+            return []
+        
+        all_opportunities = research_data.get('top_research_targets', [])
+        
+        if stage:
+            return [opp for opp in all_opportunities if opp.get('stage') == stage]
+        
+        return all_opportunities
 
 # Instancia global
 insider_app = InsiderTradingApp()
@@ -120,9 +143,44 @@ def api_run_pipeline():
 
 @app.route('/api/opportunities')
 def api_opportunities():
-    """API: Lista de oportunidades básicas"""
+    """API: Lista de cluster opportunities"""
     opportunities = insider_app.get_opportunities()
     return jsonify(opportunities)
+
+@app.route('/api/whale-opportunities')
+def api_whale_opportunities():
+    """API: Lista de whale opportunities"""
+    whales = insider_app.get_whale_opportunities()
+    return jsonify(whales)
+
+@app.route('/api/opportunities-by-stage/<stage>')
+def api_opportunities_by_stage(stage):
+    """API: Opportunities filtradas por stage"""
+    opportunities = insider_app.get_opportunities_by_stage(stage)
+    return jsonify(opportunities)
+
+@app.route('/api/stage-buckets')
+def api_stage_buckets():
+    """API: Opportunities organizadas por stage"""
+    research_data = insider_app.get_research_data()
+    
+    if not research_data:
+        return jsonify({
+            'early_opportunities': [],
+            'confirmed_opportunities': [], 
+            'late_opportunities': [],
+            'whale_opportunities': []
+        })
+    
+    stage_buckets = research_data.get('stage_buckets', {})
+    whale_buckets = research_data.get('type_buckets', {}).get('whale_opportunities', [])
+    
+    return jsonify({
+        'early_opportunities': stage_buckets.get('early_opportunities', []),
+        'confirmed_opportunities': stage_buckets.get('confirmed_opportunities', []),
+        'late_opportunities': stage_buckets.get('late_opportunities', []),
+        'whale_opportunities': whale_buckets
+    })
 
 @app.route('/api/research-data')
 def api_research_data():
@@ -132,29 +190,75 @@ def api_research_data():
 
 @app.route('/api/research-targets')
 def api_research_targets():
-    """API: Top targets para research manual"""
+    """API: Top targets para research manual con momentum data"""
     research_data = insider_app.get_research_data()
     
     if not research_data:
         return jsonify([])
     
-    # Solo top targets con datos de mercado
-    targets = research_data.get('top_research_targets', [])[:10]
+    # Top targets con momentum data
+    targets = research_data.get('top_research_targets', [])[:15]
     
-    # Filtrar solo los que tienen precio actual
+    # Filtrar solo los que tienen datos de momentum
     targets_with_data = [
         target for target in targets 
-        if target.get('current_price') is not None
+        if target.get('current_price') is not None and target.get('momentum_pct') is not None
     ]
     
     return jsonify(targets_with_data)
 
+@app.route('/api/momentum-summary')
+def api_momentum_summary():
+    """API: Resumen de momentum para monitoring"""
+    research_data = insider_app.get_research_data()
+    
+    if not research_data:
+        return jsonify({
+            'total_positions': 0,
+            'avg_momentum': 0,
+            'winning_positions': 0,
+            'losing_positions': 0
+        })
+    
+    all_opportunities = research_data.get('top_research_targets', [])
+    
+    # Filtrar solo los que tienen momentum data
+    with_momentum = [opp for opp in all_opportunities if opp.get('momentum_pct') is not None]
+    
+    if not with_momentum:
+        return jsonify({
+            'total_positions': 0,
+            'avg_momentum': 0,
+            'winning_positions': 0,
+            'losing_positions': 0
+        })
+    
+    total_positions = len(with_momentum)
+    avg_momentum = sum(opp['momentum_pct'] for opp in with_momentum) / total_positions
+    winning_positions = len([opp for opp in with_momentum if opp['momentum_pct'] > 0])
+    losing_positions = len([opp for opp in with_momentum if opp['momentum_pct'] < 0])
+    
+    return jsonify({
+        'total_positions': total_positions,
+        'avg_momentum': round(avg_momentum, 2),
+        'winning_positions': winning_positions,
+        'losing_positions': losing_positions,
+        'win_rate': round((winning_positions / total_positions) * 100, 1) if total_positions > 0 else 0
+    })
+
 @app.route('/download/opportunities')
 def download_opportunities():
-    """Descarga CSV de oportunidades"""
+    """Descarga CSV de cluster opportunities"""
     if insider_app.opportunities_file.exists():
         return send_file(insider_app.opportunities_file, as_attachment=True)
     return "No hay datos disponibles", 404
+
+@app.route('/download/whales')
+def download_whales():
+    """Descarga CSV de whale opportunities"""
+    if insider_app.whale_file.exists():
+        return send_file(insider_app.whale_file, as_attachment=True)
+    return "No hay datos de whales disponibles", 404
 
 @app.route('/download/research')
 def download_research():

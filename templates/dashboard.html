@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insider Trading Research Dashboard</title>
+    <title>Insider Trading Research Dashboard V2</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -122,7 +122,68 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        
+        .stage-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stage-tab {
+            padding: 10px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .stage-tab.active,
+        .stage-tab:hover {
+            border-color: #007bff;
+            background: #007bff;
+            color: white;
+        }
+        
+        .stage-tab.early { border-color: #28a745; }
+        .stage-tab.early.active { background: #28a745; }
+        
+        .stage-tab.confirmed { border-color: #ffc107; color: #856404; }
+        .stage-tab.confirmed.active { background: #ffc107; color: white; }
+        
+        .stage-tab.whale { border-color: #6f42c1; }
+        .stage-tab.whale.active { background: #6f42c1; }
+        
+        .momentum-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .momentum-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .momentum-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .momentum-positive { color: #28a745; }
+        .momentum-negative { color: #dc3545; }
+        .momentum-neutral { color: #6c757d; }
         
         .opportunities-grid {
             display: grid;
@@ -137,6 +198,7 @@
             padding: 20px;
             background: #fff;
             transition: all 0.3s;
+            position: relative;
         }
         
         .opportunity-card:hover {
@@ -158,12 +220,34 @@
         }
         
         .score {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
             padding: 6px 12px;
             border-radius: 20px;
             font-weight: 600;
+            font-size: 0.9em;
         }
+        
+        .score.whale {
+            background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+            color: white;
+        }
+        
+        .score.cluster {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .momentum-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .momentum-positive { background: #28a745; }
+        .momentum-negative { background: #dc3545; }
+        .momentum-neutral { background: #6c757d; }
         
         .opportunity-details {
             color: #6c757d;
@@ -176,6 +260,27 @@
             margin-bottom: 8px;
         }
         
+        .momentum-display {
+            font-size: 1.1em;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .stage-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .stage-early { background: #d4edda; color: #155724; }
+        .stage-confirmed { background: #fff3cd; color: #856404; }
+        .stage-late { background: #f8d7da; color: #721c24; }
+        
         .signals {
             margin-top: 15px;
             padding: 10px;
@@ -183,6 +288,14 @@
             border-radius: 4px;
             font-size: 0.9em;
             color: #495057;
+        }
+        
+        .strategy-recommendation {
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            background: #f8f9fa;
+            font-size: 0.9em;
         }
         
         .loading {
@@ -232,14 +345,18 @@
                 display: block;
                 margin-right: 0;
             }
+            
+            .stage-tabs {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Insider Trading Research</h1>
-            <p>Sistema inteligente de detección de oportunidades de inversión</p>
+            <h1>🎯 Insider Trading Research V2</h1>
+            <p>Sistema inteligente con whale detection + momentum analysis</p>
         </div>
         
         <div class="main-content">
@@ -272,24 +389,59 @@
                 </div>
             </div>
             
-            <!-- Research Targets -->
+            <!-- Momentum Summary -->
             <div class="section">
-                <h2>🏆 Top Research Targets</h2>
-                <div id="research-targets">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>Cargando oportunidades de research...</p>
+                <h2>📈 Momentum Summary</h2>
+                <div id="momentum-summary" class="momentum-summary">
+                    <div class="momentum-card">
+                        <div class="momentum-value momentum-neutral" id="avg-momentum">-</div>
+                        <div>Avg Momentum</div>
+                    </div>
+                    <div class="momentum-card">
+                        <div class="momentum-value" id="total-positions">-</div>
+                        <div>Total Positions</div>
+                    </div>
+                    <div class="momentum-card">
+                        <div class="momentum-value momentum-positive" id="winning-positions">-</div>
+                        <div>Winning</div>
+                    </div>
+                    <div class="momentum-card">
+                        <div class="momentum-value momentum-negative" id="losing-positions">-</div>
+                        <div>Losing</div>
+                    </div>
+                    <div class="momentum-card">
+                        <div class="momentum-value" id="win-rate">-</div>
+                        <div>Win Rate</div>
                     </div>
                 </div>
             </div>
             
-            <!-- All Opportunities -->
+            <!-- Stage-Based Opportunities -->
             <div class="section">
-                <h2>📊 Todas las Oportunidades</h2>
-                <div id="all-opportunities">
+                <h2>🎯 Opportunities by Stage</h2>
+                
+                <div class="stage-tabs">
+                    <div class="stage-tab whale active" data-stage="whale">🐋 Whale Trades</div>
+                    <div class="stage-tab early" data-stage="early">🟢 Early Stage</div>
+                    <div class="stage-tab confirmed" data-stage="confirmed">🟡 Confirmed</div>
+                    <div class="stage-tab" data-stage="late">🔴 Late (Avoid)</div>
+                </div>
+                
+                <div id="stage-opportunities">
                     <div class="loading">
                         <div class="spinner"></div>
-                        <p>Cargando todas las oportunidades...</p>
+                        <p>Cargando opportunities por stage...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Research Targets -->
+            <div class="section">
+                <h2>🏆 All Research Targets</h2>
+                <div id="all-research-targets">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando research targets...</p>
                     </div>
                 </div>
             </div>
@@ -299,7 +451,8 @@
                 <div class="downloads">
                     <h3>📁 Descargas</h3>
                     <p style="margin-bottom: 15px;">Descarga los datos para análisis detallado</p>
-                    <a href="/download/opportunities" class="btn btn-success">📈 Oportunidades (CSV)</a>
+                    <a href="/download/whales" class="btn btn-success">🐋 Whale Trades (CSV)</a>
+                    <a href="/download/opportunities" class="btn btn-success">📈 Cluster Opportunities (CSV)</a>
                     <a href="/download/research" class="btn btn-success">🔬 Research Data (CSV)</a>
                 </div>
             </div>
@@ -308,13 +461,34 @@
 
     <script>
         let refreshInterval;
+        let currentStage = 'whale';
         
         // Cargar datos al inicio
         document.addEventListener('DOMContentLoaded', function() {
             loadSystemStatus();
-            loadResearchTargets();
-            loadAllOpportunities();
+            loadMomentumSummary();
+            loadStageOpportunities(currentStage);
+            loadAllResearchTargets();
+            
+            // Setup stage tabs
+            setupStageTabs();
         });
+        
+        function setupStageTabs() {
+            const tabs = document.querySelectorAll('.stage-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Add active to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Load data for selected stage
+                    currentStage = tab.dataset.stage;
+                    loadStageOpportunities(currentStage);
+                });
+            });
+        }
         
         // Botón ejecutar pipeline
         document.getElementById('run-pipeline').addEventListener('click', function() {
@@ -326,8 +500,9 @@
         // Botón refresh
         document.getElementById('refresh-data').addEventListener('click', function() {
             loadSystemStatus();
-            loadResearchTargets();
-            loadAllOpportunities();
+            loadMomentumSummary();
+            loadStageOpportunities(currentStage);
+            loadAllResearchTargets();
         });
         
         async function loadSystemStatus() {
@@ -365,6 +540,30 @@
             }
         }
         
+        async function loadMomentumSummary() {
+            try {
+                const response = await fetch('/api/momentum-summary');
+                const summary = await response.json();
+                
+                document.getElementById('avg-momentum').textContent = `${summary.avg_momentum > 0 ? '+' : ''}${summary.avg_momentum}%`;
+                document.getElementById('avg-momentum').className = `momentum-value ${getMomentumClass(summary.avg_momentum)}`;
+                
+                document.getElementById('total-positions').textContent = summary.total_positions;
+                document.getElementById('winning-positions').textContent = summary.winning_positions;
+                document.getElementById('losing-positions').textContent = summary.losing_positions;
+                document.getElementById('win-rate').textContent = `${summary.win_rate}%`;
+                
+            } catch (error) {
+                console.error('Error loading momentum summary:', error);
+            }
+        }
+        
+        function getMomentumClass(momentum) {
+            if (momentum > 0) return 'momentum-positive';
+            if (momentum < 0) return 'momentum-negative';
+            return 'momentum-neutral';
+        }
+        
         async function runPipeline() {
             try {
                 const response = await fetch('/api/run-pipeline', {
@@ -385,8 +584,9 @@
                             clearInterval(checkCompletion);
                             clearInterval(refreshInterval);
                             loadSystemStatus();
-                            loadResearchTargets();
-                            loadAllOpportunities();
+                            loadMomentumSummary();
+                            loadStageOpportunities(currentStage);
+                            loadAllResearchTargets();
                         }
                     }, 3000);
                 } else {
@@ -398,88 +598,147 @@
             }
         }
         
-        async function loadResearchTargets() {
+        async function loadStageOpportunities(stage) {
+            try {
+                const response = await fetch('/api/stage-buckets');
+                const buckets = await response.json();
+                
+                const container = document.getElementById('stage-opportunities');
+                let opportunities = [];
+                
+                switch(stage) {
+                    case 'whale':
+                        opportunities = buckets.whale_opportunities || [];
+                        break;
+                    case 'early':
+                        opportunities = buckets.early_opportunities || [];
+                        break;
+                    case 'confirmed':
+                        opportunities = buckets.confirmed_opportunities || [];
+                        break;
+                    case 'late':
+                        opportunities = buckets.late_opportunities || [];
+                        break;
+                }
+                
+                if (opportunities.length === 0) {
+                    container.innerHTML = `<div class="loading"><p>No hay opportunities en stage: ${stage}</p></div>`;
+                    return;
+                }
+                
+                container.innerHTML = '<div class="opportunities-grid">' + 
+                    opportunities.map(opp => createOpportunityCard(opp)).join('') +
+                    '</div>';
+                    
+            } catch (error) {
+                console.error('Error loading stage opportunities:', error);
+                document.getElementById('stage-opportunities').innerHTML = 
+                    '<div class="loading"><p>Error cargando opportunities</p></div>';
+            }
+        }
+        
+        async function loadAllResearchTargets() {
             try {
                 const response = await fetch('/api/research-targets');
                 const targets = await response.json();
                 
-                const container = document.getElementById('research-targets');
+                const container = document.getElementById('all-research-targets');
                 
                 if (targets.length === 0) {
-                    container.innerHTML = '<div class="loading"><p>No hay datos de research disponibles. Ejecuta el análisis primero.</p></div>';
+                    container.innerHTML = '<div class="loading"><p>No hay research targets disponibles. Ejecuta el análisis primero.</p></div>';
                     return;
                 }
                 
                 container.innerHTML = '<div class="opportunities-grid">' + 
-                    targets.slice(0, 5).map(target => createOpportunityCard(target, true)).join('') +
+                    targets.slice(0, 12).map(target => createOpportunityCard(target)).join('') +
                     '</div>';
                     
             } catch (error) {
                 console.error('Error loading research targets:', error);
-                document.getElementById('research-targets').innerHTML = 
+                document.getElementById('all-research-targets').innerHTML = 
                     '<div class="loading"><p>Error cargando research targets</p></div>';
             }
         }
         
-        async function loadAllOpportunities() {
-            try {
-                const response = await fetch('/api/opportunities');
-                const opportunities = await response.json();
-                
-                const container = document.getElementById('all-opportunities');
-                
-                if (opportunities.length === 0) {
-                    container.innerHTML = '<div class="loading"><p>No hay oportunidades disponibles. Ejecuta el scraper primero.</p></div>';
-                    return;
-                }
-                
-                container.innerHTML = '<div class="opportunities-grid">' + 
-                    opportunities.slice(0, 12).map(opp => createOpportunityCard(opp, false)).join('') +
-                    '</div>';
-                    
-            } catch (error) {
-                console.error('Error loading opportunities:', error);
-                document.getElementById('all-opportunities').innerHTML = 
-                    '<div class="loading"><p>Error cargando oportunidades</p></div>';
-            }
-        }
-        
-        function createOpportunityCard(opp, isResearch) {
-            const price = opp.current_price ? `$${opp.current_price}` : 'N/A';
-            const pe = opp.pe_ratio ? opp.pe_ratio : 'N/A';
+        function createOpportunityCard(opp) {
+            const isWhale = opp.type === 'whale';
+            const momentum = opp.momentum_pct || 0;
+            const currentPrice = opp.current_price || 'N/A';
+            const insiderPrice = opp.insider_price || (isWhale ? opp.purchase_price : opp.avg_purchase_price) || 'N/A';
+            const pe = opp.pe_ratio || 'N/A';
             const signals = opp.research_signals || 'Sin análisis';
+            const stage = opp.stage_desc || 'Unknown';
+            const strategy = opp.strategy || {};
+            
+            const scoreValue = isWhale ? opp.whale_score : opp.score;
+            const scoreClass = isWhale ? 'whale' : 'cluster';
+            const momentumClass = getMomentumClass(momentum);
             
             return `
                 <div class="opportunity-card">
+                    <div class="momentum-indicator ${momentumClass}"></div>
                     <div class="opportunity-header">
                         <div class="ticker">${opp.ticker}</div>
-                        <div class="score">${opp.score}</div>
+                        <div class="score ${scoreClass}">${scoreValue}</div>
                     </div>
+                    
+                    <div class="stage-badge stage-${opp.stage || 'unknown'}">${stage}</div>
+                    
                     <div class="opportunity-details">
+                        ${isWhale ? `
+                        <div class="detail-row">
+                            <span>Insider:</span>
+                            <span>${opp.insider_name}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Value:</span>
+                            <span>$${opp.purchase_value_millions}M</span>
+                        </div>
+                        ` : `
                         <div class="detail-row">
                             <span>Insiders:</span>
                             <span>${opp.insider_count}</span>
                         </div>
                         <div class="detail-row">
-                            <span>Valor Total:</span>
+                            <span>Total Value:</span>
                             <span>$${opp.total_value_millions}M</span>
                         </div>
+                        `}
+                        
                         <div class="detail-row">
-                            <span>Última Compra:</span>
-                            <span>${opp.latest_purchase}</span>
+                            <span>Insider Price:</span>
+                            <span>$${insiderPrice}</span>
                         </div>
-                        ${isResearch ? `
                         <div class="detail-row">
-                            <span>Precio Actual:</span>
-                            <span>${price}</span>
+                            <span>Current Price:</span>
+                            <span>$${currentPrice}</span>
                         </div>
+                        
+                        <div class="momentum-display ${momentumClass}">
+                            Momentum: ${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%
+                        </div>
+                        
                         <div class="detail-row">
                             <span>P/E Ratio:</span>
                             <span>${pe}</span>
                         </div>
-                        ` : ''}
+                        <div class="detail-row">
+                            <span>Days Since:</span>
+                            <span>${opp.days_since_latest || opp.days_since_trade || 'N/A'}</span>
+                        </div>
                     </div>
-                    ${isResearch ? `<div class="signals"><strong>Señales:</strong> ${signals}</div>` : ''}
+                    
+                    <div class="signals"><strong>Señales:</strong> ${signals}</div>
+                    
+                    ${strategy.action ? `
+                    <div class="strategy-recommendation">
+                        <strong>Strategy:</strong> ${strategy.action}<br>
+                        <strong>Position:</strong> ${strategy.position_size} | 
+                        <strong>Stop:</strong> ${strategy.stop_loss} | 
+                        <strong>Target:</strong> ${strategy.target}<br>
+                        <em>${strategy.reasoning}</em>
+                    </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -489,6 +748,7 @@
             fetch('/api/status').then(response => response.json()).then(status => {
                 if (!status.is_scraping) {
                     loadSystemStatus();
+                    loadMomentumSummary();
                 }
             });
         }, 30000);
