@@ -591,6 +591,20 @@
                     }, 3000);
                 } else {
                     alert('Error: ' + result.message);
+            // Calculate P&L in dollars
+            let pnlDollars = 0;
+            let pnlPerShare = 0;
+            if (currentPrice !== 'N/A' && insiderPrice !== 'N/A') {
+                const current = parseFloat(currentPrice);
+                const insider = parseFloat(insiderPrice);
+                pnlPerShare = current - insider;
+                
+                if (isWhale && opp.qty_purchased) {
+                    pnlDollars = opp.qty_purchased * pnlPerShare;
+                } else if (!isWhale && opp.total_value_usd && insider > 0) {
+                    // Estimate shares from total investment
+                    const estimatedShares = opp.total_value_usd / insider;
+                    pnlDollars = estimatedShares * pnlPerShare;
                 }
             } catch (error) {
                 console.error('Error running pipeline:', error);
@@ -670,13 +684,27 @@
             const stage = opp.stage_desc || 'Unknown';
             const strategy = opp.strategy || {};
             
+            // Debug logging
+            console.log(`${opp.ticker}: momentum_pct=${opp.momentum_pct}, current=${currentPrice}, insider=${insiderPrice}`);
+            
             const scoreValue = isWhale ? opp.whale_score : opp.score;
             const scoreClass = isWhale ? 'whale' : 'cluster';
             const momentumClass = getMomentumClass(momentum);
             
+            // Calculate momentum manually if missing
+            let calculatedMomentum = momentum;
+            if ((!momentum || momentum === 0) && currentPrice !== 'N/A' && insiderPrice !== 'N/A') {
+                const current = parseFloat(currentPrice);
+                const insider = parseFloat(insiderPrice);
+                if (current > 0 && insider > 0) {
+                    calculatedMomentum = ((current - insider) / insider) * 100;
+                    console.log(`${opp.ticker}: Calculated momentum = ${calculatedMomentum.toFixed(2)}%`);
+                }
+            }
+            
             return `
                 <div class="opportunity-card">
-                    <div class="momentum-indicator ${momentumClass}"></div>
+                    <div class="momentum-indicator ${getMomentumClass(calculatedMomentum)}"></div>
                     <div class="opportunity-header">
                         <div class="ticker">${opp.ticker}</div>
                         <div class="score ${scoreClass}">${scoreValue}</div>
@@ -714,9 +742,15 @@
                             <span>$${currentPrice}</span>
                         </div>
                         
-                        <div class="momentum-display ${momentumClass}">
-                            Momentum: ${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%
+                        <div class="momentum-display ${getMomentumClass(calculatedMomentum)}">
+                            Momentum: ${calculatedMomentum > 0 ? '+' : ''}${calculatedMomentum.toFixed(1)}%
                         </div>
+                        
+                        ${pnlDollars !== 0 ? `
+                        <div class="momentum-display ${getMomentumClass(calculatedMomentum)}" style="font-size: 0.9em; margin-top: 5px;">
+                            P&L: ${pnlDollars > 0 ? '+' : ''}${(pnlDollars/1000000).toFixed(1)}M (${pnlPerShare > 0 ? '+' : ''}${pnlPerShare.toFixed(2)}/share)
+                        </div>
+                        ` : ''}
                         
                         <div class="detail-row">
                             <span>P/E Ratio:</span>
