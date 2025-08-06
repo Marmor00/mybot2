@@ -245,10 +245,6 @@
             border-radius: 50%;
         }
         
-        .momentum-positive { background: #28a745; }
-        .momentum-negative { background: #dc3545; }
-        .momentum-neutral { background: #6c757d; }
-        
         .opportunity-details {
             color: #6c757d;
             line-height: 1.6;
@@ -635,11 +631,11 @@
             document.getElementById('chartMomentum').textContent = `${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%`;
             document.getElementById('chartMomentum').className = `chart-metric-value ${getMomentumClass(momentum)}`;
             
-            document.getElementById('chartPnL').textContent = `${(pnlDollars/1000000).toFixed(1)}M`;
+            document.getElementById('chartPnL').textContent = `$${(pnlDollars/1000000).toFixed(1)}M`;
             document.getElementById('chartPnL').className = `chart-metric-value ${getMomentumClass(momentum)}`;
             
-            document.getElementById('chartEntry').textContent = `${parseFloat(insiderPrice).toFixed(2)}`;
-            document.getElementById('chartCurrent').textContent = `${parseFloat(currentPrice).toFixed(2)}`;
+            document.getElementById('chartEntry').textContent = `$${parseFloat(insiderPrice).toFixed(2)}`;
+            document.getElementById('chartCurrent').textContent = `$${parseFloat(currentPrice).toFixed(2)}`;
             
             // Show modal
             modal.style.display = 'block';
@@ -762,6 +758,7 @@
                 const response = await fetch('/api/momentum-summary');
                 const summary = await response.json();
                 
+                // Actualizar los valores EN el DOM
                 document.getElementById('avg-momentum').textContent = `${summary.avg_momentum > 0 ? '+' : ''}${summary.avg_momentum}%`;
                 document.getElementById('avg-momentum').className = `momentum-value ${getMomentumClass(summary.avg_momentum)}`;
                 
@@ -772,6 +769,12 @@
                 
             } catch (error) {
                 console.error('Error loading momentum summary:', error);
+                // Mostrar valores por defecto en caso de error
+                document.getElementById('avg-momentum').textContent = '0%';
+                document.getElementById('total-positions').textContent = '0';
+                document.getElementById('winning-positions').textContent = '0';
+                document.getElementById('losing-positions').textContent = '0';
+                document.getElementById('win-rate').textContent = '0%';
             }
         }
         
@@ -887,12 +890,35 @@
             const stage = opp.stage_desc || 'Unknown';
             const strategy = opp.strategy || {};
             
+            // Calcular P&L
+            let pnlDollars = 0;
+            let pnlPerShare = 0;
+            
+            if (currentPrice !== 'N/A' && insiderPrice !== 'N/A') {
+                const current = parseFloat(currentPrice);
+                const insider = parseFloat(insiderPrice);
+                
+                if (current > 0 && insider > 0) {
+                    pnlPerShare = current - insider;
+                    
+                    // Estimar P&L total basado en el value de la inversión
+                    if (isWhale) {
+                        const totalValue = opp.purchase_value_usd || 0;
+                        const estimatedShares = totalValue / insider;
+                        pnlDollars = estimatedShares * pnlPerShare;
+                    } else {
+                        const totalValue = opp.total_value_usd || 0;
+                        const estimatedShares = totalValue / insider;
+                        pnlDollars = estimatedShares * pnlPerShare;
+                    }
+                }
+            }
+            
             // Debug logging
-            console.log(`${opp.ticker}: momentum_pct=${opp.momentum_pct}, current=${currentPrice}, insider=${insiderPrice}`);
+            console.log(`${opp.ticker}: momentum_pct=${opp.momentum_pct}, current=${currentPrice}, insider=${insiderPrice}, PnL=${pnlDollars.toFixed(0)}`);
             
             const scoreValue = isWhale ? opp.whale_score : opp.score;
             const scoreClass = isWhale ? 'whale' : 'cluster';
-            const momentumClass = getMomentumClass(momentum);
             
             // Calculate momentum manually if missing
             let calculatedMomentum = momentum;
@@ -951,7 +977,7 @@
                         
                         ${pnlDollars !== 0 ? `
                         <div class="momentum-display ${getMomentumClass(calculatedMomentum)}" style="font-size: 0.9em; margin-top: 5px;">
-                            P&L: ${pnlDollars > 0 ? '+' : ''}${(pnlDollars/1000000).toFixed(1)}M (${pnlPerShare > 0 ? '+' : ''}${pnlPerShare.toFixed(2)}/share)
+                            Est. P&L: ${pnlDollars > 0 ? '+' : ''}$${(Math.abs(pnlDollars)/1000000).toFixed(1)}M (${pnlPerShare > 0 ? '+' : ''}$${pnlPerShare.toFixed(2)}/share)
                         </div>
                         ` : ''}
                         
