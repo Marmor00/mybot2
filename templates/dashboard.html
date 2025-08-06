@@ -332,6 +332,97 @@
             border-radius: 8px;
         }
         
+        /* Chart Modal Styles */
+        .chart-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        
+        .chart-modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 95%;
+            max-width: 1200px;
+            height: 85vh;
+            position: relative;
+        }
+        
+        .chart-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+        
+        .chart-close:hover {
+            color: #000;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-right: 40px;
+        }
+        
+        .chart-info {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .chart-metric {
+            text-align: center;
+        }
+        
+        .chart-metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .chart-metric-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .chart-container {
+            height: calc(100% - 100px);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .btn-chart {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn-chart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(23,162,184,0.3);
+        }
+        
         @media (max-width: 768px) {
             .opportunities-grid {
                 grid-template-columns: 1fr;
@@ -458,10 +549,46 @@
             </div>
         </div>
     </div>
+    
+    <!-- Chart Modal -->
+    <div id="chartModal" class="chart-modal">
+        <div class="chart-modal-content">
+            <span class="chart-close">&times;</span>
+            <div class="chart-header">
+                <div>
+                    <h2 id="chartTitle">TICKER Chart Analysis</h2>
+                </div>
+                <div class="chart-info">
+                    <div class="chart-metric">
+                        <div class="chart-metric-value" id="chartMomentum">+0.0%</div>
+                        <div class="chart-metric-label">Momentum</div>
+                    </div>
+                    <div class="chart-metric">
+                        <div class="chart-metric-value" id="chartPnL">$0.0M</div>
+                        <div class="chart-metric-label">Insider P&L</div>
+                    </div>
+                    <div class="chart-metric">
+                        <div class="chart-metric-value" id="chartEntry">$0.00</div>
+                        <div class="chart-metric-label">Insider Price</div>
+                    </div>
+                    <div class="chart-metric">
+                        <div class="chart-metric-value" id="chartCurrent">$0.00</div>
+                        <div class="chart-metric-label">Current Price</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div id="tradingview_chart"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
 
     <script>
         let refreshInterval;
         let currentStage = 'whale';
+        let currentChart = null;
         
         // Cargar datos al inicio
         document.addEventListener('DOMContentLoaded', function() {
@@ -472,7 +599,97 @@
             
             // Setup stage tabs
             setupStageTabs();
+            
+            // Setup chart modal
+            setupChartModal();
         });
+        
+        function setupChartModal() {
+            const modal = document.getElementById('chartModal');
+            const closeBtn = document.querySelector('.chart-close');
+            
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+                if (currentChart) {
+                    currentChart.remove();
+                    currentChart = null;
+                }
+            };
+            
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    if (currentChart) {
+                        currentChart.remove();
+                        currentChart = null;
+                    }
+                }
+            };
+        }
+        
+        function showChart(ticker, momentum, pnlDollars, insiderPrice, currentPrice, purchaseDate) {
+            const modal = document.getElementById('chartModal');
+            
+            // Update header info
+            document.getElementById('chartTitle').textContent = `${ticker} Chart Analysis`;
+            document.getElementById('chartMomentum').textContent = `${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%`;
+            document.getElementById('chartMomentum').className = `chart-metric-value ${getMomentumClass(momentum)}`;
+            
+            document.getElementById('chartPnL').textContent = `${(pnlDollars/1000000).toFixed(1)}M`;
+            document.getElementById('chartPnL').className = `chart-metric-value ${getMomentumClass(momentum)}`;
+            
+            document.getElementById('chartEntry').textContent = `${parseFloat(insiderPrice).toFixed(2)}`;
+            document.getElementById('chartCurrent').textContent = `${parseFloat(currentPrice).toFixed(2)}`;
+            
+            // Show modal
+            modal.style.display = 'block';
+            
+            // Clear previous chart
+            const chartContainer = document.getElementById('tradingview_chart');
+            chartContainer.innerHTML = '';
+            
+            // Create TradingView chart
+            setTimeout(() => {
+                currentChart = new TradingView.widget({
+                    "width": "100%",
+                    "height": "100%",
+                    "symbol": ticker,
+                    "interval": "D",
+                    "timezone": "America/New_York",
+                    "theme": "light",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "hide_top_toolbar": false,
+                    "hide_legend": false,
+                    "save_image": false,
+                    "container_id": "tradingview_chart",
+                    "show_popup_button": false,
+                    "popup_width": "1000",
+                    "popup_height": "650",
+                    "range": "6M",
+                    "allow_symbol_change": false,
+                    "details": true,
+                    "hotlist": false,
+                    "calendar": false,
+                    "studies": [
+                        "Volume@tv-basicstudies",
+                        "MASimple@tv-basicstudies"
+                    ],
+                    "show_popup_button": false,
+                    "disabled_features": [
+                        "use_localization",
+                        "header_symbol_search",
+                        "header_compare",
+                        "header_undo_redo"
+                    ],
+                    "enabled_features": [
+                        "study_templates"
+                    ]
+                });
+            }, 100);
+        }
         
         function setupStageTabs() {
             const tabs = document.querySelectorAll('.stage-tab');
@@ -591,20 +808,6 @@
                     }, 3000);
                 } else {
                     alert('Error: ' + result.message);
-            // Calculate P&L in dollars
-            let pnlDollars = 0;
-            let pnlPerShare = 0;
-            if (currentPrice !== 'N/A' && insiderPrice !== 'N/A') {
-                const current = parseFloat(currentPrice);
-                const insider = parseFloat(insiderPrice);
-                pnlPerShare = current - insider;
-                
-                if (isWhale && opp.qty_purchased) {
-                    pnlDollars = opp.qty_purchased * pnlPerShare;
-                } else if (!isWhale && opp.total_value_usd && insider > 0) {
-                    // Estimate shares from total investment
-                    const estimatedShares = opp.total_value_usd / insider;
-                    pnlDollars = estimatedShares * pnlPerShare;
                 }
             } catch (error) {
                 console.error('Error running pipeline:', error);
@@ -763,6 +966,10 @@
                     </div>
                     
                     <div class="signals"><strong>Señales:</strong> ${signals}</div>
+                    
+                    <button class="btn-chart" onclick="showChart('${opp.ticker}', ${calculatedMomentum}, ${pnlDollars}, ${insiderPrice}, ${currentPrice}, '${opp.purchase_date || opp.latest_purchase}')">
+                        📊 Ver Chart
+                    </button>
                     
                     ${strategy.action ? `
                     <div class="strategy-recommendation">
