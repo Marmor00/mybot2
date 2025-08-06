@@ -631,11 +631,11 @@
             document.getElementById('chartMomentum').textContent = `${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%`;
             document.getElementById('chartMomentum').className = `chart-metric-value ${getMomentumClass(momentum)}`;
             
-            document.getElementById('chartPnL').textContent = `$${(pnlDollars/1000000).toFixed(1)}M`;
+            document.getElementById('chartPnL').textContent = `${(pnlDollars/1000000).toFixed(1)}M`;
             document.getElementById('chartPnL').className = `chart-metric-value ${getMomentumClass(momentum)}`;
             
-            document.getElementById('chartEntry').textContent = `$${parseFloat(insiderPrice).toFixed(2)}`;
-            document.getElementById('chartCurrent').textContent = `$${parseFloat(currentPrice).toFixed(2)}`;
+            document.getElementById('chartEntry').textContent = `${parseFloat(insiderPrice).toFixed(2)}`;
+            document.getElementById('chartCurrent').textContent = `${parseFloat(currentPrice).toFixed(2)}`;
             
             // Show modal
             modal.style.display = 'block';
@@ -644,7 +644,7 @@
             const chartContainer = document.getElementById('tradingview_chart');
             chartContainer.innerHTML = '';
             
-            // Create TradingView chart
+            // Create TradingView chart with price lines
             setTimeout(() => {
                 currentChart = new TradingView.widget({
                     "width": "100%",
@@ -682,7 +682,63 @@
                     ],
                     "enabled_features": [
                         "study_templates"
-                    ]
+                    ],
+                    "onChartReady": function() {
+                        // Agregar líneas de precio cuando el chart esté listo
+                        setTimeout(() => {
+                            try {
+                                const widget = currentChart;
+                                const chart = widget.chart();
+                                
+                                // Línea horizontal para precio de compra insider (rojo)
+                                chart.createShape(
+                                    { time: chart.getVisibleRange().from, price: parseFloat(insiderPrice) },
+                                    {
+                                        shape: "horizontal_line",
+                                        text: `Insider Entry: ${parseFloat(insiderPrice).toFixed(2)}`,
+                                        overrides: {
+                                            linecolor: "#e74c3c",
+                                            linewidth: 2,
+                                            linestyle: 0, // solid line
+                                            showLabel: true,
+                                            textcolor: "#e74c3c",
+                                            fontsize: 12
+                                        }
+                                    }
+                                );
+                                
+                                // Línea horizontal para precio actual (azul)
+                                chart.createShape(
+                                    { time: chart.getVisibleRange().from, price: parseFloat(currentPrice) },
+                                    {
+                                        shape: "horizontal_line", 
+                                        text: `Current: ${parseFloat(currentPrice).toFixed(2)} (${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%)`,
+                                        overrides: {
+                                            linecolor: momentum > 0 ? "#27ae60" : "#e74c3c",
+                                            linewidth: 2,
+                                            linestyle: 2, // dashed line
+                                            showLabel: true,
+                                            textcolor: momentum > 0 ? "#27ae60" : "#e74c3c",
+                                            fontsize: 12
+                                        }
+                                    }
+                                );
+                                
+                                console.log(`Chart lines added for ${ticker}: Entry=${insiderPrice}, Current=${currentPrice}`);
+                                
+                            } catch (error) {
+                                console.log("Could not add price lines - using basic chart");
+                                console.error(error);
+                                
+                                // Fallback: agregar las líneas como texto en el título
+                                document.getElementById('chartTitle').innerHTML = `
+                                    ${ticker} Chart Analysis<br>
+                                    <small style="color: #e74c3c;">📍 Insider Entry: ${parseFloat(insiderPrice).toFixed(2)}</small> | 
+                                    <small style="color: ${momentum > 0 ? '#27ae60' : '#e74c3c'};">📈 Current: ${parseFloat(currentPrice).toFixed(2)}</small>
+                                `;
+                            }
+                        }, 1500); // Esperar un poco más para que el chart se cargue completamente
+                    }
                 });
             }, 100);
         }
