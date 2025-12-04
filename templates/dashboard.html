@@ -276,7 +276,242 @@
         .stage-early { background: #d4edda; color: #155724; }
         .stage-confirmed { background: #fff3cd; color: #856404; }
         .stage-late { background: #f8d7da; color: #721c24; }
-        
+
+        /* NUEVO: Exit Status Badges */
+        .exit-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+            margin-bottom: 10px;
+        }
+
+        .exit-holding { background: #d1ecf1; color: #0c5460; }
+        .exit-exited { background: #f8d7da; color: #721c24; }
+        .exit-partial { background: #fff3cd; color: #856404; }
+
+        /* NUEVO: Insider Track Record Badges */
+        .insider-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            margin-top: 5px;
+        }
+
+        .insider-trusted {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+        }
+
+        .insider-good {
+            background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+            color: white;
+        }
+
+        .insider-limited {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .insider-poor {
+            background: #dc3545;
+            color: white;
+        }
+
+        .insider-new {
+            background: #6c757d;
+            color: white;
+        }
+
+        .insider-stats {
+            display: block;
+            font-size: 0.9em;
+            margin-top: 3px;
+            opacity: 0.95;
+        }
+
+        /* NUEVO: HOT Alerts Panel */
+        .hot-alerts-panel {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+
+        .hot-alerts-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .hot-alerts-header h2 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: white;
+        }
+
+        .hot-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .hot-opportunities-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .hot-opportunity-item {
+            background: rgba(255,255,255,0.15);
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid white;
+            transition: all 0.3s;
+        }
+
+        .hot-opportunity-item:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateX(5px);
+        }
+
+        .hot-ticker {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .hot-details {
+            font-size: 0.9em;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        /* NUEVO: Freshness Filter Buttons */
+        .freshness-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .freshness-filter {
+            padding: 10px 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            background: white;
+        }
+
+        .freshness-filter.active {
+            border-color: #ff6b6b;
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .freshness-filter.hot-filter { border-color: #ff6b6b; }
+        .freshness-filter.hot-filter.active { background: #ff6b6b; }
+
+        .freshness-filter.fresh-filter { border-color: #28a745; }
+        .freshness-filter.fresh-filter.active { background: #28a745; }
+
+        .freshness-filter.recent-filter { border-color: #ffc107; color: #856404; }
+        .freshness-filter.recent-filter.active { background: #ffc107; color: white; }
+
+        .freshness-filter.all-filter { border-color: #6c757d; }
+        .freshness-filter.all-filter.active { background: #6c757d; color: white; }
+
+        /* NUEVO: Filtro combo SWEET SPOT */
+        .freshness-filter.sweet-spot-filter {
+            border-color: #e83e8c;
+            background: linear-gradient(135deg, #ff6b6b 0%, #e83e8c 100%);
+            color: white;
+            font-weight: 700;
+        }
+        .freshness-filter.sweet-spot-filter.active {
+            background: linear-gradient(135deg, #e83e8c 0%, #d63384 100%);
+            box-shadow: 0 4px 15px rgba(232,62,140,0.4);
+        }
+
+        /* Freshness level badges en cards */
+        .freshness-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .freshness-hot { background: #ff6b6b; color: white; }
+        .freshness-fresh { background: #28a745; color: white; }
+        .freshness-recent { background: #ffc107; color: white; }
+        .freshness-old { background: #6c757d; color: white; }
+
+        /* NUEVO: Sweet Spot Badge */
+        .sweet-spot-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #e83e8c 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(232,62,140,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Badge de alto score */
+        .high-score-indicator {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(255,215,0,0.4);
+        }
+
+        .exit-alert {
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 4px solid #dc3545;
+            background: #f8d7da;
+            font-size: 0.85em;
+            color: #721c24;
+        }
+
+        .exit-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e7f3ff;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
         .signals {
             margin-top: 15px;
             padding: 10px;
@@ -502,10 +737,41 @@
                     </div>
                 </div>
             </div>
-            
+
+            <!-- HOT ALERTS Panel (NUEVO) -->
+            <div id="hot-alerts-section" class="hot-alerts-panel" style="display: none;">
+                <div class="hot-alerts-header">
+                    <h2>🔥 HOT ALERTS</h2>
+                    <div class="hot-badge" id="hot-count">0 nuevas</div>
+                    <div class="hot-badge" id="hot-timestamp">-</div>
+                </div>
+                <div id="hot-opportunities-list" class="hot-opportunities-list">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+
             <!-- Stage-Based Opportunities -->
             <div class="section">
                 <h2>🎯 Opportunities by Stage</h2>
+
+                <!-- NUEVO: Freshness Filters -->
+                <div class="freshness-filters">
+                    <div class="freshness-filter sweet-spot-filter" data-freshness="sweet-spot">
+                        ⭐ SWEET SPOT (Fresh + Early)
+                    </div>
+                    <div class="freshness-filter hot-filter active" data-freshness="hot">
+                        🔥 HOT (0-3 days)
+                    </div>
+                    <div class="freshness-filter fresh-filter" data-freshness="fresh">
+                        ✅ FRESH (4-7 days)
+                    </div>
+                    <div class="freshness-filter recent-filter" data-freshness="recent">
+                        ⚠️ RECENT (8-14 days)
+                    </div>
+                    <div class="freshness-filter all-filter" data-freshness="all">
+                        📊 ALL
+                    </div>
+                </div>
                 
                 <div class="stage-tabs">
                     <div class="stage-tab whale active" data-stage="whale">🐋 Whale Trades</div>
@@ -541,6 +807,7 @@
                     <a href="/download/whales" class="btn btn-success">🐋 Whale Trades (CSV)</a>
                     <a href="/download/opportunities" class="btn btn-success">📈 Cluster Opportunities (CSV)</a>
                     <a href="/download/research" class="btn btn-success">🔬 Research Data (CSV)</a>
+                    <a href="/download/exit-tracking" class="btn btn-success">🎯 Exit Tracking (CSV)</a>
                 </div>
             </div>
         </div>
@@ -585,17 +852,23 @@
         let refreshInterval;
         let currentStage = 'whale';
         let currentChart = null;
-        
+        let currentFreshnessFilter = 'hot';  // NUEVO: filtro por defecto HOT
+        let allOpportunitiesCache = [];  // NUEVO: cache de todas las oportunidades
+
         // Cargar datos al inicio
         document.addEventListener('DOMContentLoaded', function() {
             loadSystemStatus();
             loadMomentumSummary();
+            loadHotAlerts();  // NUEVO
             loadStageOpportunities(currentStage);
             loadAllResearchTargets();
-            
+
             // Setup stage tabs
             setupStageTabs();
-            
+
+            // Setup freshness filters (NUEVO)
+            setupFreshnessFilters();
+
             // Setup chart modal
             setupChartModal();
         });
@@ -695,14 +968,152 @@
                     tabs.forEach(t => t.classList.remove('active'));
                     // Add active to clicked tab
                     tab.classList.add('active');
-                    
+
                     // Load data for selected stage
                     currentStage = tab.dataset.stage;
                     loadStageOpportunities(currentStage);
                 });
             });
         }
-        
+
+        // NUEVO: Setup freshness filters
+        function setupFreshnessFilters() {
+            const filters = document.querySelectorAll('.freshness-filter');
+            filters.forEach(filter => {
+                filter.addEventListener('click', () => {
+                    // Remove active from all filters
+                    filters.forEach(f => f.classList.remove('active'));
+                    // Add active to clicked filter
+                    filter.classList.add('active');
+
+                    // Update current filter
+                    currentFreshnessFilter = filter.dataset.freshness;
+
+                    // Reload opportunities with filter
+                    loadStageOpportunities(currentStage);
+                });
+            });
+        }
+
+        // NUEVO: Cargar HOT alerts
+        async function loadHotAlerts() {
+            try {
+                const response = await fetch('/api/new-opportunities');
+                const data = await response.json();
+
+                if (!data || !data.hot_opportunities || data.hot_opportunities.length === 0) {
+                    document.getElementById('hot-alerts-section').style.display = 'none';
+                    return;
+                }
+
+                const hotOpps = data.hot_opportunities;
+                const timestamp = data.timestamp ? new Date(data.timestamp).toLocaleString() : '-';
+
+                // Mostrar panel
+                document.getElementById('hot-alerts-section').style.display = 'block';
+                document.getElementById('hot-count').textContent = `${hotOpps.length} nuevas`;
+                document.getElementById('hot-timestamp').textContent = timestamp;
+
+                // Renderizar lista
+                const listContainer = document.getElementById('hot-opportunities-list');
+                listContainer.innerHTML = hotOpps.slice(0, 6).map(opp => {
+                    const isWhale = opp.type === 'whale';
+                    const value = isWhale ? opp.purchase_value_millions : opp.total_value_millions;
+                    const momentum = opp.momentum_pct || 0;
+
+                    return `
+                        <div class="hot-opportunity-item">
+                            <div class="hot-ticker">
+                                ${isWhale ? '🐋' : '📊'} ${opp.ticker}
+                            </div>
+                            <div class="hot-details">
+                                <strong>Value:</strong> $${value}M<br>
+                                <strong>Momentum:</strong> ${momentum > 0 ? '+' : ''}${momentum.toFixed(1)}%<br>
+                                <strong>Days:</strong> ${opp.days_since_latest || opp.days_since_trade || 'N/A'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading HOT alerts:', error);
+                document.getElementById('hot-alerts-section').style.display = 'none';
+            }
+        }
+
+        // NUEVO: Filtrar oportunidades por freshness
+        function filterByFreshness(opportunities, freshnessLevel) {
+            if (freshnessLevel === 'all') {
+                return opportunities;
+            }
+
+            // NUEVO: Sweet Spot = FRESH (4-7 days) + EARLY STAGE (0-5% momentum)
+            if (freshnessLevel === 'sweet-spot') {
+                return opportunities.filter(opp => {
+                    const days = opp.days_since_latest || opp.days_since_trade || 999;
+                    const momentum = opp.momentum_pct || 0;
+                    const stage = opp.stage || '';
+
+                    // Criterios del Sweet Spot:
+                    // 1. Fresh (4-7 días) O Hot (0-3 días)
+                    // 2. Early stage (momentum 0-5%) O early_positive/early_negative
+                    const isFreshOrHot = days <= 7;
+                    const isEarlyMomentum = momentum >= -5 && momentum <= 5;
+                    const isEarlyStage = stage.includes('early');
+
+                    return isFreshOrHot && (isEarlyMomentum || isEarlyStage);
+                });
+            }
+
+            return opportunities.filter(opp => {
+                const days = opp.days_since_latest || opp.days_since_trade || 999;
+
+                if (freshnessLevel === 'hot') {
+                    return days <= 3;
+                } else if (freshnessLevel === 'fresh') {
+                    return days > 3 && days <= 7;
+                } else if (freshnessLevel === 'recent') {
+                    return days > 7 && days <= 14;
+                }
+
+                return true;
+            });
+        }
+
+        // NUEVO: Determinar si es Sweet Spot
+        function isSweetSpot(opp) {
+            const days = opp.days_since_latest || opp.days_since_trade || 999;
+            const momentum = opp.momentum_pct || 0;
+            const stage = opp.stage || '';
+
+            const isFreshOrHot = days <= 7;
+            const isEarlyMomentum = momentum >= -5 && momentum <= 5;
+            const isEarlyStage = stage.includes('early');
+
+            return isFreshOrHot && (isEarlyMomentum || isEarlyStage);
+        }
+
+        // NUEVO: Sorting inteligente de oportunidades
+        function sortOpportunities(opportunities) {
+            return opportunities.sort((a, b) => {
+                // 1. Sweet Spot primero
+                const aSweetSpot = isSweetSpot(a);
+                const bSweetSpot = isSweetSpot(b);
+                if (aSweetSpot && !bSweetSpot) return -1;
+                if (!aSweetSpot && bSweetSpot) return 1;
+
+                // 2. Luego por freshness (días más recientes primero)
+                const aDays = a.days_since_latest || a.days_since_trade || 999;
+                const bDays = b.days_since_latest || b.days_since_trade || 999;
+                if (aDays !== bDays) return aDays - bDays;
+
+                // 3. Finalmente por score
+                const aScore = a.whale_score || a.score || 0;
+                const bScore = b.whale_score || b.score || 0;
+                return bScore - aScore;
+            });
+        }
+
         // Botón ejecutar pipeline
         document.getElementById('run-pipeline').addEventListener('click', function() {
             if (confirm('¿Ejecutar análisis completo? Esto puede tomar varios minutos.')) {
@@ -714,6 +1125,7 @@
         document.getElementById('refresh-data').addEventListener('click', function() {
             loadSystemStatus();
             loadMomentumSummary();
+            loadHotAlerts();  // NUEVO
             loadStageOpportunities(currentStage);
             loadAllResearchTargets();
         });
@@ -822,10 +1234,10 @@
             try {
                 const response = await fetch('/api/stage-buckets');
                 const buckets = await response.json();
-                
+
                 const container = document.getElementById('stage-opportunities');
                 let opportunities = [];
-                
+
                 switch(stage) {
                     case 'whale':
                         opportunities = buckets.whale_opportunities || [];
@@ -840,19 +1252,25 @@
                         opportunities = buckets.late_opportunities || [];
                         break;
                 }
-                
+
+                // NUEVO: Aplicar filtro de freshness
+                opportunities = filterByFreshness(opportunities, currentFreshnessFilter);
+
                 if (opportunities.length === 0) {
-                    container.innerHTML = `<div class="loading"><p>No hay opportunities en stage: ${stage}</p></div>`;
+                    container.innerHTML = `<div class="loading"><p>No hay opportunities en stage: ${stage} con filtro: ${currentFreshnessFilter}</p></div>`;
                     return;
                 }
-                
-                container.innerHTML = '<div class="opportunities-grid">' + 
+
+                // NUEVO: Ordenar oportunidades (Sweet Spot primero, luego por días)
+                opportunities = sortOpportunities(opportunities);
+
+                container.innerHTML = '<div class="opportunities-grid">' +
                     opportunities.map(opp => createOpportunityCard(opp)).join('') +
                     '</div>';
-                    
+
             } catch (error) {
                 console.error('Error loading stage opportunities:', error);
-                document.getElementById('stage-opportunities').innerHTML = 
+                document.getElementById('stage-opportunities').innerHTML =
                     '<div class="loading"><p>Error cargando opportunities</p></div>';
             }
         }
@@ -880,6 +1298,114 @@
             }
         }
         
+        function getExitStatusBadge(opp) {
+            const exitStatus = opp.exit_status || 'HOLDING';
+            const hasExits = opp.has_exits || false;
+
+            if (!hasExits || exitStatus === 'HOLDING') {
+                return '<div class="exit-badge exit-holding">🟢 HOLDING</div>';
+            } else if (exitStatus === 'EXITED') {
+                return '<div class="exit-badge exit-exited">🔴 EXITED</div>';
+            } else if (exitStatus === 'PARTIAL_EXIT') {
+                return '<div class="exit-badge exit-partial">🟡 PARTIAL EXIT</div>';
+            }
+            return '';
+        }
+
+        function getInsiderTrackRecordBadge(opp) {
+            const trackRecord = opp.insider_track_record;
+
+            if (!trackRecord || trackRecord.evaluated_trades === 0) {
+                // No hay suficiente data para evaluar
+                if (trackRecord && trackRecord.total_trades > 0) {
+                    return '<div class="insider-badge insider-new">🆕 NEW INSIDER (No historical data)</div>';
+                }
+                return '';
+            }
+
+            const winRate = trackRecord.win_rate || 0;
+            const totalTrades = trackRecord.evaluated_trades || 0;
+            const confidence = trackRecord.confidence_level;
+
+            // TRUSTED INSIDER (HIGH confidence)
+            if (confidence === 'HIGH') {
+                return `
+                    <div class="insider-badge insider-trusted">
+                        ✅ TRUSTED INSIDER
+                        <span class="insider-stats">
+                            ${winRate}% win rate (${totalTrades} trades)
+                        </span>
+                    </div>
+                `;
+            }
+
+            // GOOD TRACK RECORD (MEDIUM confidence)
+            if (confidence === 'MEDIUM') {
+                return `
+                    <div class="insider-badge insider-good">
+                        👍 GOOD TRACK RECORD
+                        <span class="insider-stats">
+                            ${winRate}% win rate (${totalTrades} trades)
+                        </span>
+                    </div>
+                `;
+            }
+
+            // POOR TRACK RECORD
+            if (confidence === 'LOW' && winRate < 50) {
+                return `
+                    <div class="insider-badge insider-poor">
+                        ❌ POOR TRACK RECORD
+                        <span class="insider-stats">
+                            ${winRate}% win rate (${totalTrades} trades)
+                        </span>
+                    </div>
+                `;
+            }
+
+            // LOW confidence pero decent win rate
+            if (confidence === 'LOW') {
+                return `
+                    <div class="insider-badge insider-limited">
+                        ⚠️ LIMITED DATA
+                        <span class="insider-stats">
+                            ${winRate}% win rate (${totalTrades} trades)
+                        </span>
+                    </div>
+                `;
+            }
+
+            return '';
+        }
+
+        function getExitDetails(opp) {
+            const hasExits = opp.has_exits || false;
+            const exitDetails = opp.exit_details || '';
+            const exitStatus = opp.exit_status || 'HOLDING';
+
+            if (!hasExits || exitStatus === 'HOLDING') {
+                return '';
+            }
+
+            if (exitStatus === 'EXITED') {
+                return `
+                    <div class="exit-alert">
+                        <strong>⚠️ EXIT ALERT:</strong> Insider has exited this position<br>
+                        ${exitDetails}
+                    </div>
+                `;
+            } else if (exitStatus === 'PARTIAL_EXIT') {
+                return `
+                    <div class="exit-info">
+                        <strong>ℹ️ Partial Exit:</strong> Insider reduced position<br>
+                        ${exitDetails}
+                    </div>
+                `;
+            }
+
+            return '';
+        }
+
         function createOpportunityCard(opp) {
             const isWhale = opp.type === 'whale';
             const momentum = opp.momentum_pct || 0;
@@ -919,7 +1445,7 @@
             
             const scoreValue = isWhale ? opp.whale_score : opp.score;
             const scoreClass = isWhale ? 'whale' : 'cluster';
-            
+
             // Calculate momentum manually if missing
             let calculatedMomentum = momentum;
             if ((!momentum || momentum === 0) && currentPrice !== 'N/A' && insiderPrice !== 'N/A') {
@@ -930,17 +1456,26 @@
                     console.log(`${opp.ticker}: Calculated momentum = ${calculatedMomentum.toFixed(2)}%`);
                 }
             }
-            
+
+            // NUEVO: Determinar si es Sweet Spot
+            const sweetSpot = isSweetSpot(opp);
+            const highScore = (isWhale && scoreValue >= 85) || (!isWhale && scoreValue >= 75);
+
             return `
                 <div class="opportunity-card">
+                    ${highScore ? '<div class="high-score-indicator">⭐ HIGH SCORE</div>' : ''}
                     <div class="momentum-indicator ${getMomentumClass(calculatedMomentum)}"></div>
                     <div class="opportunity-header">
                         <div class="ticker">${opp.ticker}</div>
                         <div class="score ${scoreClass}">${scoreValue}</div>
                     </div>
-                    
+
+                    ${sweetSpot ? '<div class="sweet-spot-badge">⭐ SWEET SPOT</div>' : ''}
                     <div class="stage-badge stage-${opp.stage || 'unknown'}">${stage}</div>
-                    
+
+                    ${getExitStatusBadge(opp)}
+                    ${getInsiderTrackRecordBadge(opp)}
+
                     <div class="opportunity-details">
                         ${isWhale ? `
                         <div class="detail-row">
@@ -991,8 +1526,10 @@
                         </div>
                     </div>
                     
+                    ${getExitDetails(opp)}
+
                     <div class="signals"><strong>Señales:</strong> ${signals}</div>
-                    
+
                     <button class="btn-chart" onclick="showChart('${opp.ticker}', ${calculatedMomentum}, ${pnlDollars}, ${insiderPrice}, ${currentPrice}, '${opp.purchase_date || opp.latest_purchase}')">
                         📊 Ver Chart
                     </button>

@@ -43,7 +43,7 @@ class ResearchAssistant:
             with open(key_file, 'r') as f:
                 return f.read().strip()
         
-        print("⚠️  No API key found - usando hardcoded")
+        print("️  No API key found - usando hardcoded")
         return "d28176pr01qr2iau5o4gd28176pr01qr2iau5o50"
     
     def load_opportunities(self):
@@ -55,28 +55,28 @@ class ResearchAssistant:
         if self.opportunities_file.exists():
             cluster_df = pd.read_csv(self.opportunities_file)
             cluster_data = cluster_df.to_dict('records')
-            print(f"📊 Cargadas {len(cluster_data)} cluster opportunities")
+            print(f" Cargadas {len(cluster_data)} cluster opportunities")
         
         # Cargar whales  
         if self.whale_file.exists():
             whale_df = pd.read_csv(self.whale_file)
             whale_data = whale_df.to_dict('records')
-            print(f"🐋 Cargadas {len(whale_data)} whale opportunities")
+            print(f" Cargadas {len(whale_data)} whale opportunities")
         
         if not cluster_data and not whale_data:
-            print(f"❌ No se encontraron datos")
-            print(f"💡 Ejecuta primero: python scraper.py")
+            print(f" No se encontraron datos")
+            print(f" Ejecuta primero: python scraper.py")
             return None, None
         
         return cluster_data, whale_data
     
     def enrich_with_market_data(self, all_opportunities):
         """Enriquece con datos de mercado actuales"""
-        print(f"📈 Obteniendo precios actuales via Finnhub...")
+        print(f" Obteniendo precios actuales via Finnhub...")
         
         # Obtener tickers únicos
         tickers = list(set(opp['ticker'] for opp in all_opportunities))
-        print(f"🎯 Actualizando {len(tickers)} tickers: {', '.join(tickers[:10])}{'...' if len(tickers) > 10 else ''}")
+        print(f" Actualizando {len(tickers)} tickers: {', '.join(tickers[:10])}{'...' if len(tickers) > 10 else ''}")
         
         market_data = {}
         successful_updates = 0
@@ -103,17 +103,17 @@ class ResearchAssistant:
                         '52w_low': quote_data.get('l', 0)
                     }
                     
-                    print(f"✅ {ticker}: ${quote_data.get('c', 0):.2f} (PE: {profile_data.get('peNWA', 'N/A')})")
+                    print(f" {ticker}: ${quote_data.get('c', 0):.2f} (PE: {profile_data.get('peNWA', 'N/A')})")
                     successful_updates += 1
                 else:
-                    print(f"⚠️  {ticker}: No data available")
+                    print(f"️  {ticker}: No data available")
                 
                 time.sleep(1.2)  # Rate limiting
                 
             except Exception as e:
-                print(f"❌ Error con {ticker}: {e}")
+                print(f" Error con {ticker}: {e}")
         
-        print(f"📊 Actualizados: {successful_updates}/{len(tickers)} tickers")
+        print(f" Actualizados: {successful_updates}/{len(tickers)} tickers")
         return market_data
     
     def get_stock_quote(self, ticker):
@@ -231,7 +231,7 @@ class ResearchAssistant:
     
     def analyze_opportunities(self, cluster_data, whale_data, market_data):
         """Analiza todas las opportunities con momentum"""
-        print(f"🧮 Analizando momentum y stages...")
+        print(f" Analizando momentum y stages...")
         
         all_enriched = []
         
@@ -411,7 +411,7 @@ class ResearchAssistant:
     
     def generate_research_report(self, enriched_opportunities):
         """Genera reporte final con stage analysis"""
-        print(f"📋 Generando reporte con momentum analysis...")
+        print(f" Generando reporte con momentum analysis...")
         
         # Separar por tipo y stage
         early_opportunities = [opp for opp in enriched_opportunities if opp['stage'] in ['early_positive', 'early_negative']]
@@ -457,8 +457,8 @@ class ResearchAssistant:
         df_research = pd.DataFrame(enriched_opportunities)
         df_research.to_csv(self.research_csv, index=False)
         
-        print(f"💾 Reporte guardado: {self.research_report}")
-        print(f"💾 CSV research: {self.research_csv}")
+        print(f" Reporte guardado: {self.research_report}")
+        print(f" CSV research: {self.research_csv}")
         
         return report
     
@@ -466,27 +466,27 @@ class ResearchAssistant:
         """Imprime resumen ejecutivo con stages"""
         summary = report['summary']
         
-        print(f"\n📊 RESEARCH REPORT V2 - {datetime.now().strftime('%Y-%m-%d')}")
+        print(f"\n RESEARCH REPORT V2 - {datetime.now().strftime('%Y-%m-%d')}")
         print("=" * 70)
         
-        print(f"🎯 OVERVIEW:")
+        print(f" OVERVIEW:")
         print(f"   Total opportunities: {summary['total_opportunities']}")
-        print(f"   🐋 Whales: {summary['whale_opportunities']} | 📊 Clusters: {summary['cluster_opportunities']}")
-        print(f"   📈 Avg momentum: {summary['avg_momentum']}%")
+        print(f"    Whales: {summary['whale_opportunities']} |  Clusters: {summary['cluster_opportunities']}")
+        print(f"    Avg momentum: {summary['avg_momentum']}%")
         
-        print(f"\n📈 STAGE ANALYSIS:")
-        print(f"   🟢 Early stage: {summary['early_stage']} (high risk/reward)")
-        print(f"   🟡 Confirmed stage: {summary['confirmed_stage']} (moderate risk)")
-        print(f"   🔴 Late stage: {summary['late_stage']} (avoid)")
+        print(f"\n STAGE ANALYSIS:")
+        print(f"    Early stage: {summary['early_stage']} (high risk/reward)")
+        print(f"    Confirmed stage: {summary['confirmed_stage']} (moderate risk)")
+        print(f"    Late stage: {summary['late_stage']} (avoid)")
         
-        print(f"\n🐋 TOP WHALE OPPORTUNITIES:")
+        print(f"\n TOP WHALE OPPORTUNITIES:")
         for i, opp in enumerate(report['type_buckets']['whale_opportunities'][:3], 1):
             print(f"{i}. {opp['ticker']}: {opp['insider_name']}")
             print(f"   ${opp['purchase_value_millions']}M @ ${opp['insider_price']} → ${opp['current_price']} ({opp['momentum_pct']:+.1f}%)")
             print(f"   Stage: {opp['stage_desc']} | Action: {opp['strategy']['action']}")
             print()
         
-        print(f"📊 TOP CLUSTER OPPORTUNITIES:")
+        print(f" TOP CLUSTER OPPORTUNITIES:")
         for i, opp in enumerate(report['stage_buckets']['confirmed_opportunities'][:3], 1):
             price_change = opp['momentum_pct']
             print(f"{i}. {opp['ticker']}: {opp['insider_count']} insiders")
@@ -496,7 +496,7 @@ class ResearchAssistant:
 
 def main():
     """Función principal"""
-    print("🔬 RESEARCH ASSISTANT V2")
+    print(" RESEARCH ASSISTANT V2")
     print("=" * 50)
     
     assistant = ResearchAssistant()
@@ -521,9 +521,9 @@ def main():
     # 5. Mostrar resumen
     assistant.print_research_summary(report)
     
-    print(f"\n✅ RESEARCH ASSISTANT V2 COMPLETADO")
-    print(f"📁 Revisa: {assistant.research_csv}")
-    print(f"🎯 Próximo paso: Revisar stage buckets para strategy")
+    print(f"\n RESEARCH ASSISTANT V2 COMPLETADO")
+    print(f" Revisa: {assistant.research_csv}")
+    print(f" Próximo paso: Revisar stage buckets para strategy")
 
 if __name__ == "__main__":
     main()

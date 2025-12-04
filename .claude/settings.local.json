@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c taskkill /PID 690364 /F)",
+      "Bash(nul)",
+      "Bash(dir:*)",
+      "Bash(timeout:*)",
+      "Bash(findstr:*)",
+      "Bash(schtasks /Create /TN \"InsiderTradingDailyScraper\" /TR \"\"\"C:\\Users\\MM\\anaconda3\\python.exe\"\" \"\"c:\\Users\\MM\\expedientes-app\\trading\\Bot2\\daily_scraper.py\"\" --no-alerts >> \"\"c:\\Users\\MM\\expedientes-app\\trading\\Bot2\\logs\\auto_scraper.log\"\" 2>&1\" /SC DAILY /ST 18:00 /F)",
+      "Bash(cmd /c create_scheduled_task.bat)",
+      "Bash(powershell -ExecutionPolicy Bypass -File setup_automation.ps1)",
+      "Bash(pip install:*)",
+      "Bash(cscript //Nologo -c \"Set oWS = WScript.CreateObject(\"\"WScript.Shell\"\"): sLinkFile = \"\"%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\InsiderTradingScheduler.lnk\"\": Set oLink = oWS.CreateShortcut(sLinkFile): oLink.TargetPath = \"\"C:\\Users\\MM\\anaconda3\\pythonw.exe\"\": oLink.Arguments = \"\"\"\"\"\"c:\\Users\\MM\\expedientes-app\\trading\\Bot2\\auto_scheduler.py\"\"\"\"\"\": oLink.WorkingDirectory = \"\"c:\\Users\\MM\\expedientes-app\\trading\\Bot2\"\": oLink.WindowStyle = 7: oLink.Save\")",
+      "Bash(cscript //Nologo CreateShortcut.vbs)",
+      "Bash(start /min pythonw auto_scheduler.py)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Trader Dashboard - Strategy Comparison</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .strategy-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .strategy-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .strategy-card.ready {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+
+        .strategy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .strategy-emoji {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .strategy-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .ready-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        .metric-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .metric-value.positive {
+            color: #28a745;
+        }
+
+        .metric-value.negative {
+            color: #dc3545;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #495057;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .ranking-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .ranking-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .rank-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #6c757d;
+            margin-right: 15px;
+            min-width: 40px;
+        }
+
+        .rank-number.first {
+            color: #ffd700;
+        }
+
+        .rank-number.second {
+            color: #c0c0c0;
+        }
+
+        .rank-number.third {
+            color: #cd7f32;
+        }
+
+        .rank-info {
+            flex: 1;
+        }
+
+        .rank-name {
+            font-weight: 600;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .rank-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .criteria-section {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .criteria-title {
+            font-size: 1.4em;
+            color: #856404;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .criteria-text {
+            text-align: center;
+            font-size: 1.1em;
+            color: #6c5400;
+            margin-bottom: 20px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.3);
+        }
+
+        .timestamp {
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Multi-Trader Strategy Comparison</h1>
+            <p>Scientific validation of 5 parallel trading strategies</p>
+        </div>
+
+        <div class="main-content">
+            <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+            <div class="timestamp" id="timestamp">Loading...</div>
+
+            <div class="criteria-section">
+                <div class="criteria-title">📊 Investment-Ready Criteria</div>
+                <div class="criteria-text">
+                    Win Rate ≥ 60% | Sharpe Ratio ≥ 1.5 | Max Drawdown ≤ -15% | Min 15 trades
+                </div>
+                <div id="ready-strategies" style="text-align: center; font-size: 1.2em; font-weight: 600;"></div>
+            </div>
+
+            <div class="ranking-section">
+                <div class="ranking-title">🏆 Ranking by Total Return</div>
+                <div id="ranking-list"></div>
+            </div>
+
+            <div class="strategy-grid" id="strategy-grid">
+                <!-- Las estrategias se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadData() {
+            try {
+                const response = await fetch('../data/multi_trader_report.json');
+                const data = await response.json();
+
+                // Update timestamp
+                const timestamp = new Date(data.timestamp).toLocaleString();
+                document.getElementById('timestamp').textContent = `Last updated: ${timestamp}`;
+
+                // Render strategies
+                renderStrategies(data.strategies);
+
+                // Render ranking
+                renderRanking(data.strategies);
+
+                // Show ready strategies
+                showReadyStrategies(data.strategies);
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('timestamp').textContent = 'Error loading data';
+            }
+        }
+
+        function renderStrategies(strategies) {
+            const grid = document.getElementById('strategy-grid');
+            grid.innerHTML = '';
+
+            strategies.forEach(strategy => {
+                const card = document.createElement('div');
+                card.className = 'strategy-card' + (strategy.ready_for_real_money ? ' ready' : '');
+
+                const returnClass = strategy.portfolio.total_return_pct >= 0 ? 'positive' : 'negative';
+
+                card.innerHTML = `
+                    <div class="strategy-header">
+                        <div>
+                            <div class="strategy-emoji">${strategy.emoji}</div>
+                            <div class="strategy-name">${strategy.name}</div>
+                        </div>
+                        ${strategy.ready_for_real_money ? '<span class="ready-badge">✅ READY</span>' : ''}
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Portfolio Value</span>
+                        <span class="metric-value">$${strategy.portfolio.total_value.toFixed(2)}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Return</span>
+                        <span class="metric-value ${returnClass}">${strategy.portfolio.total_return_pct >= 0 ? '+' : ''}${strategy.portfolio.total_return_pct.toFixed(2)}%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Cash / Invested</span>
+                        <span class="metric-value">$${strategy.portfolio.cash.toFixed(0)} / $${strategy.portfolio.invested.toFixed(0)}</span>
+                    </div>
+
+                    <div class="section-title">📈 Trading Stats</div>
+                    <div class="metric-row">
+                        <span class="metric-label">Total Trades</span>
+                        <span class="metric-value">${strategy.trading.total_trades}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Win Rate</span>
+                        <span class="metric-value">${strategy.trading.win_rate.toFixed(1)}%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">W / L</span>
+                        <span class="metric-value">${strategy.trading.winning_trades} / ${strategy.trading.losing_trades}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Open Positions</span>
+                        <span class="metric-value">${strategy.trading.open_positions}</span>
+                    </div>
+
+                    ${strategy.trading.total_trades >= 5 ? `
+                    <div class="section-title">💎 Investment Metrics</div>
+                    <div class="metric-row">
+                        <span class="metric-label">Sharpe Ratio</span>
+                        <span class="metric-value">${strategy.investment_metrics.sharpe_ratio.toFixed(2)}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Max Drawdown</span>
+                        <span class="metric-value negative">${strategy.investment_metrics.max_drawdown_pct.toFixed(2)}%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Profit Factor</span>
+                        <span class="metric-value">${strategy.investment_metrics.profit_factor.toFixed(2)}</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Win / Loss</span>
+                        <span class="metric-value">${strategy.investment_metrics.avg_win_pct.toFixed(1)}% / ${strategy.investment_metrics.avg_loss_pct.toFixed(1)}%</span>
+                    </div>
+                    ` : '<div style="text-align: center; color: #6c757d; padding: 15px;">Need 5+ trades for metrics</div>'}
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function renderRanking(strategies) {
+            const rankingList = document.getElementById('ranking-list');
+            rankingList.innerHTML = '';
+
+            strategies.forEach((strategy, index) => {
+                const item = document.createElement('div');
+                item.className = 'ranking-item';
+
+                let rankClass = '';
+                if (index === 0) rankClass = 'first';
+                else if (index === 1) rankClass = 'second';
+                else if (index === 2) rankClass = 'third';
+
+                const returnClass = strategy.portfolio.total_return_pct >= 0 ? 'positive' : 'negative';
+
+                item.innerHTML = `
+                    <div class="rank-number ${rankClass}">#${index + 1}</div>
+                    <div class="rank-info">
+                        <div class="rank-name">${strategy.emoji} ${strategy.name}</div>
+                    </div>
+                    <div class="rank-value ${returnClass}">
+                        ${strategy.portfolio.total_return_pct >= 0 ? '+' : ''}${strategy.portfolio.total_return_pct.toFixed(2)}%
+                    </div>
+                `;
+
+                rankingList.appendChild(item);
+            });
+        }
+
+        function showReadyStrategies(strategies) {
+            const readyDiv = document.getElementById('ready-strategies');
+            const ready = strategies.filter(s => s.ready_for_real_money);
+
+            if (ready.length > 0) {
+                readyDiv.innerHTML = `
+                    <div style="color: #155724; margin-top: 10px;">
+                        ✅ ${ready.length} strateg${ready.length > 1 ? 'ies are' : 'y is'} ready for real money:<br>
+                        ${ready.map(s => s.emoji + ' ' + s.name).join(', ')}
+                    </div>
+                `;
+            } else {
+                readyDiv.innerHTML = `
+                    <div style="color: #856404;">
+                        ⏳ No strategies meet all criteria yet. Keep collecting data...
+                    </div>
+                `;
+            }
+        }
+
+        // Load data on page load
+        loadData();
+
+        // Auto-refresh every 5 minutes
+        setInterval(loadData, 5 * 60 * 1000);
+    </script>
+</body>
+</html>

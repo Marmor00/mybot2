@@ -21,6 +21,8 @@ class IntelligentInsiderScraper:
         self.raw_csv = self.output_dir / "insider_trades_raw.csv"
         self.filtered_csv = self.output_dir / "insider_opportunities.csv"
         self.whale_csv = self.output_dir / "whale_opportunities.csv"
+        self.sales_csv = self.output_dir / "insider_sales.csv"  # NUEVO: tracking de ventas
+        self.exit_tracking_csv = self.output_dir / "exit_tracking.csv"  # NUEVO: correlación compras-ventas
         
         # Configuración inteligente
         self.config = {
@@ -47,23 +49,24 @@ class IntelligentInsiderScraper:
         ]
         
     def scrape_recent_insider_data(self):
-        """Scrape datos con ventana extendida para whales"""
-        print(f"🔍 Scraping últimos {self.config['days_back']} días...")
-        
+        """Scrape datos con ventana extendida - COMPRAS Y VENTAS"""
+        print(f" Scraping últimos {self.config['days_back']} días (COMPRAS + VENTAS)...")
+
         # Fechas
         end_date = datetime.now()
         start_date = end_date - timedelta(days=self.config['days_back'])
-        
+
         start_str = start_date.strftime('%m/%d/%Y')
         end_str = end_date.strftime('%m/%d/%Y')
-        
-        print(f"📅 Período: {start_str} a {end_str}")
-        
-        # URL con filtros para solo compras
-        url = f'http://openinsider.com/screener?s=&o=&pl=&ph=&ll=&lh=&fd=-1&fdr={start_str}+-+{end_str}&td=0&tdr=&fdlyl=&fdlyh=&daysago=&xp=1&xs=1&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=2000&page=1'
+
+        print(f" Período: {start_str} a {end_str}")
+
+        # URL SIN FILTRO de transaction type - captura TODO (compras Y ventas)
+        # Removido: &xp=1 (purchases only) y &xs=1 (sales only)
+        url = f'http://openinsider.com/screener?s=&o=&pl=&ph=&ll=&lh=&fd=-1&fdr={start_str}+-+{end_str}&td=0&tdr=&fdlyl=&fdlyh=&daysago=&vl=&vh=&ocl=&och=&sic1=-1&sicl=100&sich=9999&grp=0&nfl=&nfh=&nil=&nih=&nol=&noh=&v2l=&v2h=&oc2l=&oc2h=&sortcol=0&cnt=2000&page=1'
         
         try:
-            print("📡 Descargando datos...")
+            print(" Descargando datos...")
             response = requests.get(url, timeout=45)
             response.raise_for_status()
             
@@ -76,7 +79,7 @@ class IntelligentInsiderScraper:
             tbody = table.find('tbody')
             rows = tbody.find_all('tr')
             
-            print(f"📊 Filas raw encontradas: {len(rows)}")
+            print(f" Filas raw encontradas: {len(rows)}")
             
             # Extraer y limpiar datos
             data = []
@@ -114,19 +117,19 @@ class IntelligentInsiderScraper:
                     row_data['price'] > 0):  # Precio válido crítico
                     data.append(row_data)
             
-            print(f"✅ Datos limpios extraídos: {len(data)} transacciones")
+            print(f" Datos limpios extraídos: {len(data)} transacciones")
             
             # Crear DataFrame
             df = pd.DataFrame(data)
             
             # Guardar datos raw
             df.to_csv(self.raw_csv, index=False)
-            print(f"💾 Datos raw guardados: {self.raw_csv}")
+            print(f" Datos raw guardados: {self.raw_csv}")
             
             return df
             
         except Exception as e:
-            print(f"❌ ERROR scraping: {e}")
+            print(f" ERROR scraping: {e}")
             return None
     
     def _calculate_days_since(self, trade_date_str):
@@ -186,10 +189,58 @@ class IntelligentInsiderScraper:
         except ValueError:
             return 0.0
     
+    def detect_insider_sales(self, df):
+        """Detecta y procesa VENTAS de insiders (NUEVO)"""
+        print(f"\n Detectando VENTAS de insiders...")
+
+        # Filtrar solo ventas de C-suite
+        sales_df = df[
+            (df['transaction_type'].str.contains('S - Sale', na=False)) &
+            (df['title'].str.lower().str.contains('|'.join(self.relevant_insiders), na=False)) &
+            (df['ticker'].str.len().between(1, 5)) &
+            (df['price'] > 0) &
+            (abs(df['transaction_value']) >= 100000)  # Mínimo $100K en ventas
+        ].copy()
+
+        print(f" Ventas detectadas: {len(sales_df)}")
+
+        # Preparar datos de ventas
+        sales_records = []
+
+        for _, row in sales_df.iterrows():
+            sale = {
+                'ticker': row['ticker'],
+                'company_name': row['company_name'],
+                'insider_name': row['insider_name'],
+                'title': row['title'],
+                'sale_date': row['trade_date'],
+                'sale_price': round(row['price'], 2),
+                'qty_sold': int(abs(row['qty'])),
+                'sale_value_usd': int(abs(row['transaction_value'])),
+                'sale_value_millions': round(abs(row['transaction_value'])/1000000, 1),
+                'days_since_sale': row['days_since_trade'],
+                'shares_remaining': int(row['shares_owned']) if row['shares_owned'] > 0 else 0
+            }
+            sales_records.append(sale)
+
+        # Guardar ventas
+        if sales_records:
+            sales_df_final = pd.DataFrame(sales_records)
+            sales_df_final.to_csv(self.sales_csv, index=False)
+            print(f" Ventas guardadas: {self.sales_csv}")
+
+            # Mostrar top sales
+            print(f"\n TOP VENTAS:")
+            for i, sale in enumerate(sales_records[:5], 1):
+                print(f"{i}. {sale['ticker']}: {sale['insider_name']} "
+                      f"vendió ${sale['sale_value_millions']}M @ ${sale['sale_price']}")
+
+        return sales_records
+
     def detect_whale_trades(self, df):
         """Detecta whale trades ($99M+)"""
-        print(f"\n🐋 Detectando WHALE TRADES...")
-        
+        print(f"\n Detectando WHALE TRADES...")
+
         # Filtros para whales
         whale_df = df[
             (abs(df['transaction_value']) >= self.config['whale_threshold']) &
@@ -199,7 +250,7 @@ class IntelligentInsiderScraper:
             (df['price'] > 0)  # Precio válido
         ].copy()
         
-        print(f"🐋 Whale trades encontrados: {len(whale_df)}")
+        print(f" Whale trades encontrados: {len(whale_df)}")
         
         # Preparar datos whale
         whale_opportunities = []
@@ -262,10 +313,10 @@ class IntelligentInsiderScraper:
         if whale_opportunities:
             whale_df_final = pd.DataFrame(whale_opportunities)
             whale_df_final.to_csv(self.whale_csv, index=False)
-            print(f"💾 Whale opportunities guardadas: {self.whale_csv}")
+            print(f" Whale opportunities guardadas: {self.whale_csv}")
             
             # Mostrar top whales
-            print(f"\n🏆 TOP WHALE TRADES:")
+            print(f"\n TOP WHALE TRADES:")
             for i, whale in enumerate(whale_opportunities[:3], 1):
                 print(f"{i}. {whale['ticker']}: {whale['insider_name']} "
                       f"(${whale['purchase_value_millions']}M @ ${whale['purchase_price']}) "
@@ -275,14 +326,14 @@ class IntelligentInsiderScraper:
     
     def apply_intelligent_filters(self, df):
         """Aplica filtros inteligentes para clusters (no whales)"""
-        print(f"\n🧠 Aplicando filtros para CLUSTER DETECTION...")
-        print(f"📊 Datos iniciales: {len(df)} transacciones")
+        print(f"\n Aplicando filtros para CLUSTER DETECTION...")
+        print(f" Datos iniciales: {len(df)} transacciones")
         
         original_count = len(df)
         
         # 1. Solo compras (P - Purchase)
         df = df[df['transaction_type'].str.contains('P - Purchase', na=False)]
-        print(f"✅ Solo compras: {len(df)} ({len(df)/original_count*100:.1f}%)")
+        print(f" Solo compras: {len(df)} ({len(df)/original_count*100:.1f}%)")
         
         # 2. Valor mínimo pero NO whale threshold
         min_value = self.config['min_purchase_value']
@@ -291,29 +342,29 @@ class IntelligentInsiderScraper:
             (abs(df['transaction_value']) >= min_value) & 
             (abs(df['transaction_value']) < max_value)
         ]
-        print(f"✅ Valor ${min_value/1000000:.1f}M-${max_value/1000000:.0f}M: {len(df)} transacciones")
+        print(f" Valor ${min_value/1000000:.1f}M-${max_value/1000000:.0f}M: {len(df)} transacciones")
         
         # 3. Solo insiders relevantes (C-suite)
         df = df[df['title'].str.lower().str.contains('|'.join(self.relevant_insiders), na=False)]
-        print(f"✅ Solo C-suite: {len(df)} transacciones")
+        print(f" Solo C-suite: {len(df)} transacciones")
         
         # 4. Filtrar tickers válidos
         df = df[df['ticker'].str.len().between(1, 5)]
-        print(f"✅ Tickers válidos: {len(df)} transacciones")
+        print(f" Tickers válidos: {len(df)} transacciones")
         
         # 5. Precio válido
         df = df[df['price'] > 0]
-        print(f"✅ Precios válidos: {len(df)} transacciones")
+        print(f" Precios válidos: {len(df)} transacciones")
         
         # 6. Eliminar duplicados exactos
         df = df.drop_duplicates(subset=['ticker', 'insider_name', 'trade_date', 'transaction_value'])
-        print(f"✅ Sin duplicados: {len(df)} transacciones")
+        print(f" Sin duplicados: {len(df)} transacciones")
         
         return df
     
     def detect_cluster_buying(self, df):
         """Detecta patrones de cluster buying (múltiples insiders)"""
-        print(f"\n🎯 Detectando CLUSTER BUYING patterns...")
+        print(f"\n Detectando CLUSTER BUYING patterns...")
         
         # Agrupar por ticker
         clusters = defaultdict(list)
@@ -374,10 +425,10 @@ class IntelligentInsiderScraper:
         # Ordenar por score
         cluster_results.sort(key=lambda x: x['score'], reverse=True)
         
-        print(f"📈 Clusters detectados: {len(cluster_results)}")
+        print(f" Clusters detectados: {len(cluster_results)}")
         
         # Mostrar top clusters
-        print(f"\n🏆 TOP CLUSTERS:")
+        print(f"\n TOP CLUSTERS:")
         for i, cluster in enumerate(cluster_results[:5], 1):
             print(f"{i}. {cluster['ticker']}: {cluster['insider_count']} insiders, "
                   f"${cluster['total_value']/1000000:.1f}M @ ${cluster['avg_purchase_price']:.2f} avg "
@@ -473,45 +524,169 @@ class IntelligentInsiderScraper:
         if opportunities:
             df_opp = pd.DataFrame(opportunities)
             df_opp.to_csv(self.filtered_csv, index=False)
-            print(f"💾 Cluster opportunities guardadas: {self.filtered_csv}")
-            print(f"🎯 Total cluster opportunities: {len(opportunities)}")
+            print(f" Cluster opportunities guardadas: {self.filtered_csv}")
+            print(f" Total cluster opportunities: {len(opportunities)}")
         else:
-            print("⚠️  No se encontraron cluster opportunities que cumplan criterios")
+            print("️  No se encontraron cluster opportunities que cumplan criterios")
         
         return opportunities
 
+    def track_exits(self, cluster_opportunities, whale_opportunities, sales_records):
+        """Correlaciona compras con ventas para determinar exit status (NUEVO)"""
+        print(f"\n Analizando EXIT TRACKING...")
+
+        exit_tracking = []
+
+        # Combinar todas las compras
+        all_purchases = []
+
+        # Agregar clusters
+        for cluster in cluster_opportunities:
+            for purchase in cluster.get('purchases', []):
+                all_purchases.append({
+                    'type': 'cluster',
+                    'ticker': cluster['ticker'],
+                    'insider_name': purchase['insider'],
+                    'purchase_price': purchase['price'],
+                    'purchase_date': purchase['date'],
+                    'purchase_value': purchase['value'],
+                    'qty': purchase.get('qty', 0)
+                })
+
+        # Agregar whales
+        for whale in whale_opportunities:
+            all_purchases.append({
+                'type': 'whale',
+                'ticker': whale['ticker'],
+                'insider_name': whale['insider_name'],
+                'purchase_price': whale['purchase_price'],
+                'purchase_date': whale['purchase_date'],
+                'purchase_value': whale['purchase_value_usd'],
+                'qty': whale.get('qty_purchased', 0)
+            })
+
+        print(f" Analizando {len(all_purchases)} compras vs {len(sales_records)} ventas...")
+
+        # Correlacionar compras con ventas
+        for purchase in all_purchases:
+            ticker = purchase['ticker']
+            insider = purchase['insider_name']
+
+            # Buscar ventas del mismo insider en el mismo ticker
+            matching_sales = [
+                sale for sale in sales_records
+                if sale['ticker'] == ticker and sale['insider_name'] == insider
+            ]
+
+            if matching_sales:
+                # Ordenar ventas por fecha
+                matching_sales.sort(key=lambda x: x['sale_date'])
+
+                # Tomar la venta más reciente
+                latest_sale = matching_sales[-1]
+
+                # Calcular realized P&L
+                purchase_price = purchase['purchase_price']
+                sale_price = latest_sale['sale_price']
+                realized_pnl_pct = ((sale_price - purchase_price) / purchase_price) * 100 if purchase_price > 0 else 0
+
+                # Estimar P&L en dólares
+                if purchase.get('qty', 0) > 0:
+                    realized_pnl_usd = (sale_price - purchase_price) * purchase['qty']
+                else:
+                    # Estimar shares si no tenemos qty
+                    estimated_shares = purchase['purchase_value'] / purchase_price if purchase_price > 0 else 0
+                    realized_pnl_usd = (sale_price - purchase_price) * estimated_shares
+
+                exit_status = {
+                    'ticker': ticker,
+                    'insider_name': insider,
+                    'type': purchase['type'],
+                    'purchase_date': purchase['purchase_date'],
+                    'purchase_price': purchase['purchase_price'],
+                    'purchase_value': purchase['purchase_value'],
+                    'sale_date': latest_sale['sale_date'],
+                    'sale_price': sale_price,
+                    'sale_value': latest_sale['sale_value_usd'],
+                    'qty_sold': latest_sale['qty_sold'],
+                    'shares_remaining': latest_sale['shares_remaining'],
+                    'realized_pnl_pct': round(realized_pnl_pct, 2),
+                    'realized_pnl_usd': int(realized_pnl_usd),
+                    'realized_pnl_millions': round(realized_pnl_usd/1000000, 2),
+                    'holding_period_days': (datetime.strptime(latest_sale['sale_date'], '%Y-%m-%d') -
+                                          datetime.strptime(purchase['purchase_date'], '%Y-%m-%d')).days,
+                    'exit_status': 'EXITED' if latest_sale['shares_remaining'] == 0 else 'PARTIAL_EXIT'
+                }
+
+                exit_tracking.append(exit_status)
+
+        print(f" Exit tracking: {len(exit_tracking)} insiders con ventas detectadas")
+
+        # Guardar exit tracking
+        if exit_tracking:
+            exit_df = pd.DataFrame(exit_tracking)
+            exit_df.to_csv(self.exit_tracking_csv, index=False)
+            print(f" Exit tracking guardado: {self.exit_tracking_csv}")
+
+            # Mostrar resumen de exits
+            exited_count = len([e for e in exit_tracking if e['exit_status'] == 'EXITED'])
+            partial_count = len([e for e in exit_tracking if e['exit_status'] == 'PARTIAL_EXIT'])
+
+            print(f"\n EXIT SUMMARY:")
+            print(f"    Full Exits: {exited_count}")
+            print(f"    Partial Exits: {partial_count}")
+
+            # Top realized P&Ls
+            top_wins = sorted(exit_tracking, key=lambda x: x['realized_pnl_pct'], reverse=True)[:3]
+            print(f"\n TOP REALIZED GAINS:")
+            for i, win in enumerate(top_wins, 1):
+                print(f"{i}. {win['ticker']} - {win['insider_name']}: "
+                      f"{win['realized_pnl_pct']:+.1f}% (${win['realized_pnl_millions']:.2f}M)")
+
+        return exit_tracking
+
 def main():
     """Función principal"""
-    print("🚀 INTELLIGENT INSIDER SCRAPER V2")
+    print(" INTELLIGENT INSIDER SCRAPER V3 - WITH EXIT TRACKING")
     print("=" * 60)
-    
+
     scraper = IntelligentInsiderScraper()
-    
-    # 1. Scraping básico
+
+    # 1. Scraping básico (COMPRAS + VENTAS)
     df = scraper.scrape_recent_insider_data()
     if df is None:
-        print("❌ SCRAPING FALLIDO")
+        print(" SCRAPING FALLIDO")
         sys.exit(1)
-    
-    # 2. Detectar WHALE TRADES primero
+
+    # 2. Detectar VENTAS de insiders (NUEVO)
+    sales_records = scraper.detect_insider_sales(df)
+
+    # 3. Detectar WHALE TRADES
     whale_opportunities = scraper.detect_whale_trades(df)
-    
-    # 3. Filtros para CLUSTERS (excluye whales)
+
+    # 4. Filtros para CLUSTERS (excluye whales)
     df_filtered = scraper.apply_intelligent_filters(df)
-    
-    # 4. Detección de CLUSTERS
+
+    # 5. Detección de CLUSTERS
     clusters = scraper.detect_cluster_buying(df_filtered)
-    
-    # 5. Guardar cluster opportunities
+
+    # 6. Guardar cluster opportunities
     cluster_opportunities = scraper.save_opportunities(clusters)
-    
-    print(f"\n✅ SCRAPER V2 COMPLETADO")
-    print(f"🐋 Whale trades: {len(whale_opportunities)}")
-    print(f"📊 Cluster opportunities: {len(cluster_opportunities)}")
-    print(f"📁 Datos raw: {scraper.raw_csv}")
-    print(f"📁 Clusters: {scraper.filtered_csv}")
-    print(f"📁 Whales: {scraper.whale_csv}")
-    print(f"🎯 Siguiente paso: Ejecutar asistente_v2.py para momentum analysis")
+
+    # 7. EXIT TRACKING - correlacionar compras con ventas (NUEVO)
+    exit_tracking = scraper.track_exits(cluster_opportunities, whale_opportunities, sales_records)
+
+    print(f"\n SCRAPER V3 COMPLETADO")
+    print(f" Whale trades: {len(whale_opportunities)}")
+    print(f" Cluster opportunities: {len(cluster_opportunities)}")
+    print(f" Insider sales: {len(sales_records)}")
+    print(f" Exit tracking: {len(exit_tracking)}")
+    print(f" Datos raw: {scraper.raw_csv}")
+    print(f" Clusters: {scraper.filtered_csv}")
+    print(f" Whales: {scraper.whale_csv}")
+    print(f" Sales: {scraper.sales_csv}")
+    print(f" Exit Tracking: {scraper.exit_tracking_csv}")
+    print(f" Siguiente paso: Ejecutar asistente.py para momentum analysis")
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,17 @@
+# Insider Trading Research App - Dependencies
+# Instalación: pip install -r requirements.txt
+
+# Core Web Framework
 flask==3.0.0
 gunicorn==21.2.0
+
+# Web Scraping & HTTP
 requests==2.31.0
 beautifulsoup4==4.12.2
-pandas==2.1.4
 lxml==4.9.3
+
+# Data Processing
+pandas==2.1.4
+
+# Optional but recommended for Telegram & .env support
+python-dotenv==1.0.0

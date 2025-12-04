@@ -1,3 +1,4 @@
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -5,13 +6,40 @@ __pycache__/
 build/
 dist/
 *.egg-info/
+*.egg
+
+# Virtual environments
 .env
 .venv
 venv/
+env/
+
+# Data files (DBs, CSVs, JSONs)
+data/*.db
 data/*.json
 data/*.csv
+data/*.sqlite3
+
+# Logs
+logs/
 *.log
+
+# API Keys & Config
+config/finnhub_key.txt
+config/.env
+config/telegram_token.txt
+*.key
+*.secret
+
+# IDE
 .cache/
 .DS_Store
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.Trashes
