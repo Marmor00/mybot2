@@ -26,7 +26,7 @@ class IntelligentInsiderScraper:
         
         # Configuración inteligente
         self.config = {
-            'days_back': 60,           # Extendido para whales
+            'days_back': 365,          # 12 meses para track record histórico (Month 1)
             'min_purchase_value': 500000,  # $500K mínimo individual cluster
             'min_cluster_value': 1500000,  # $1.5M mínimo cluster
             'whale_threshold': 99000000,   # $99M para whale trades

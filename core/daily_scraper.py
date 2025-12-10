@@ -16,7 +16,7 @@ from telegram_bot import TelegramBot
 from config import Config
 from database import Database
 from insider_tracker import InsiderTracker
-from paper_trading import PaperTradingSystem
+# from paper_trading import PaperTradingSystem  # Removed - using multi_trader only
 from multi_trader import MultiTraderSystem
 
 class DailyScraper:
@@ -31,7 +31,7 @@ class DailyScraper:
         self.tracker = InsiderTracker(self.db)
 
         # Paper trading systems
-        self.paper_trading = PaperTradingSystem()  # Sistema original (mantener compatibilidad)
+        # self.paper_trading = PaperTradingSystem()  # Sistema original (mantener compatibilidad)
         self.multi_trader = MultiTraderSystem()     # Sistema multi-trader (5 estrategias)
 
         # Archivos
@@ -349,28 +349,15 @@ class DailyScraper:
         # 11. Enriquecer con track records de insiders
         enriched_opportunities = self.enrich_with_track_records(enriched_opportunities)
 
-        # 12. PAPER TRADING - Procesar oportunidades y actualizar posiciones
+        # 12. MULTI-TRADER - Procesar con las 5 estrategias
         print("\n" + "=" * 70)
-        print("PAPER TRADING SYSTEM (Single Strategy)")
+        print("MULTI-TRADER SYSTEM (5 Strategies)")
         print("=" * 70)
 
         # Obtener precios actuales
         current_prices = self.get_current_prices(enriched_opportunities)
 
-        # Procesar nuevas oportunidades para auto-compra
-        self.paper_trading.process_opportunities(enriched_opportunities, current_prices)
-
-        # Actualizar posiciones existentes (verificar exits)
-        self.paper_trading.update_positions(current_prices)
-
-        # Guardar snapshot del portfolio
-        self.paper_trading.save_portfolio_snapshot()
-
-        # Mostrar resumen del portfolio
-        self.paper_trading.print_portfolio_summary()
-
-        # 12b. MULTI-TRADER - Procesar con las 5 estrategias
-        print("\n")
+        # Procesar nuevas oportunidades para auto-compra (5 estrategias)
         multi_buys = self.multi_trader.process_opportunities(enriched_opportunities, current_prices)
         multi_sells = self.multi_trader.update_positions(current_prices)
         self.multi_trader.print_comparative_summary()
@@ -446,15 +433,6 @@ class DailyScraper:
         print(f"Alertas enviadas: {'Si' if send_telegram_alerts else 'No'}")
         print()
 
-        # Paper trading summary
-        portfolio_summary = self.paper_trading.get_portfolio_summary()
-        print(f"PAPER TRADING:")
-        print(f"  Valor del portfolio: ${portfolio_summary['total_value']:,.2f}")
-        print(f"  Return total: {portfolio_summary['total_return_pct']:+.2f}%")
-        print(f"  Posiciones abiertas: {portfolio_summary['open_positions']}")
-        print(f"  Win rate: {portfolio_summary['win_rate']:.1f}%")
-        print()
-
         print(f"Datos guardados en: {Config.DATA_DIR}")
         print(f"Abre dashboard para ver resultados")
         print()
@@ -463,7 +441,6 @@ class DailyScraper:
         self.generate_multi_trader_json()
 
         # Cerrar conexiones
-        self.paper_trading.close()
         self.multi_trader.close()
 
         return True

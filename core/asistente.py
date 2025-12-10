@@ -43,7 +43,7 @@ class ResearchAssistant:
             with open(key_file, 'r') as f:
                 return f.read().strip()
         
-        print("️  No API key found - usando hardcoded")
+        print("[WARN] No API key found - usando hardcoded")
         return "d28176pr01qr2iau5o4gd28176pr01qr2iau5o50"
     
     def load_opportunities(self):

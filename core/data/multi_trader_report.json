@@ -1,0 +1,165 @@
+{
+  "timestamp": "2025-12-07T21:18:47.127018",
+  "strategies": [
+    {
+      "id": "ultra_conservative",
+      "name": "Ultra Conservative",
+      "emoji": "[UC]",
+      "portfolio": {
+        "total_value": 10000.0,
+        "cash": 9013.42,
+        "invested": 986.58,
+        "initial_capital": 10000,
+        "total_return_pct": 0.0,
+        "total_profit": 0.0
+      },
+      "trading": {
+        "open_positions": 1,
+        "total_trades": 0,
+        "winning_trades": 0,
+        "losing_trades": 0,
+        "win_rate": 0,
+        "avg_return": 0,
+        "total_realized_profit": 0
+      },
+      "investment_metrics": {
+        "sharpe_ratio": 0,
+        "max_drawdown_pct": 0,
+        "profit_factor": 0,
+        "avg_win_pct": 0,
+        "avg_loss_pct": 0,
+        "win_loss_ratio": 0,
+        "consistency_score": 0
+      },
+      "ready_for_real_money": false
+    },
+    {
+      "id": "balanced_optimal",
+      "name": "Balanced Optimal",
+      "emoji": "[BO]",
+      "portfolio": {
+        "total_value": 10000.0,
+        "cash": 7018.86,
+        "invested": 2981.1400000000003,
+        "initial_capital": 10000,
+        "total_return_pct": 0.0,
+        "total_profit": 0.0
+      },
+      "trading": {
+        "open_positions": 3,
+        "total_trades": 0,
+        "winning_trades": 0,
+        "losing_trades": 0,
+        "win_rate": 0,
+        "avg_return": 0,
+        "total_realized_profit": 0
+      },
+      "investment_metrics": {
+        "sharpe_ratio": 0,
+        "max_drawdown_pct": 0,
+        "profit_factor": 0,
+        "avg_win_pct": 0,
+        "avg_loss_pct": 0,
+        "win_loss_ratio": 0,
+        "consistency_score": 0
+      },
+      "ready_for_real_money": false
+    },
+    {
+      "id": "momentum_hunter",
+      "name": "Momentum Hunter",
+      "emoji": "[MH]",
+      "portfolio": {
+        "total_value": 10000.0,
+        "cash": 10000.0,
+        "invested": 0,
+        "initial_capital": 10000,
+        "total_return_pct": 0.0,
+        "total_profit": 0.0
+      },
+      "trading": {
+        "open_positions": 0,
+        "total_trades": 0,
+        "winning_trades": 0,
+        "losing_trades": 0,
+        "win_rate": 0,
+        "avg_return": 0,
+        "total_realized_profit": 0
+      },
+      "investment_metrics": {
+        "sharpe_ratio": 0,
+        "max_drawdown_pct": 0,
+        "profit_factor": 0,
+        "avg_win_pct": 0,
+        "avg_loss_pct": 0,
+        "win_loss_ratio": 0,
+        "consistency_score": 0
+      },
+      "ready_for_real_money": false
+    },
+    {
+      "id": "early_stage_master",
+      "name": "Early Stage Master",
+      "emoji": "[ES]",
+      "portfolio": {
+        "total_value": 10000.0,
+        "cash": 9013.42,
+        "invested": 986.58,
+        "initial_capital": 10000,
+        "total_return_pct": 0.0,
+        "total_profit": 0.0
+      },
+      "trading": {
+        "open_positions": 1,
+        "total_trades": 0,
+        "winning_trades": 0,
+        "losing_trades": 0,
+        "win_rate": 0,
+        "avg_return": 0,
+        "total_realized_profit": 0
+      },
+      "investment_metrics": {
+        "sharpe_ratio": 0,
+        "max_drawdown_pct": 0,
+        "profit_factor": 0,
+        "avg_win_pct": 0,
+        "avg_loss_pct": 0,
+        "win_loss_ratio": 0,
+        "consistency_score": 0
+      },
+      "ready_for_real_money": false
+    },
+    {
+      "id": "diversified_portfolio",
+      "name": "Diversified Portfolio",
+      "emoji": "[DP]",
+      "portfolio": {
+        "total_value": 10000.0,
+        "cash": 5398.58,
+        "invested": 4601.42,
+        "initial_capital": 10000,
+        "total_return_pct": 0.0,
+        "total_profit": 0.0
+      },
+      "trading": {
+        "open_positions": 7,
+        "total_trades": 0,
+        "winning_trades": 0,
+        "losing_trades": 0,
+        "win_rate": 0,
+        "avg_return": 0,
+        "total_realized_profit": 0
+      },
+      "investment_metrics": {
+        "sharpe_ratio": 0,
+        "max_drawdown_pct": 0,
+        "profit_factor": 0,
+        "avg_win_pct": 0,
+        "avg_loss_pct": 0,
+        "win_loss_ratio": 0,
+        "consistency_score": 0
+      },
+      "ready_for_real_money": false
+    }
+  ]
+}

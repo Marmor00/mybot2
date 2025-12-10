@@ -104,13 +104,15 @@ STRATEGIES = {
 
 
 class MultiTraderSystem:
-    def __init__(self, db_path: str = "data/multi_trader.db"):
+    def __init__(self, db_path: str = "data/multi_trader.db", trading_db_path: str = "data/insider_trading.db"):
         """Inicializa el sistema multi-trader"""
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(exist_ok=True)
+        self.trading_db_path = Path(trading_db_path)
         self.conn = None
         self.strategies = STRATEGIES
         self.init_database()
+        self._load_quality_insiders()
 
     def get_connection(self):
         """Obtiene conexión a la base de datos"""
@@ -201,6 +203,45 @@ class MultiTraderSystem:
 
         conn.commit()
         print("Multi-Trader System inicializado")
+
+    def _load_quality_insiders(self):
+        """Carga insiders de calidad desde insider_track_records (WR >= 60%)"""
+        self.quality_insiders = set()
+
+        if not self.trading_db_path.exists():
+            print("[WARN] No se encontro insider_trading.db - no se aplicara filtro de track record")
+            return
+
+        try:
+            trading_conn = sqlite3.connect(self.trading_db_path)
+            cursor = trading_conn.cursor()
+
+            # Obtener insiders con WR >= 60%
+            cursor.execute("""
+                SELECT insider_name, ticker, win_rate, total_trades
+                FROM insider_track_records
+                WHERE win_rate >= 60.0 AND total_trades >= 1
+            """)
+
+            rows = cursor.fetchall()
+            for row in rows:
+                insider_name, ticker, wr, trades = row
+                self.quality_insiders.add(insider_name)
+
+            trading_conn.close()
+
+            print(f"[OK] Track Record Filter activado: {len(self.quality_insiders)} insiders de calidad (WR >= 60%)")
+
+        except Exception as e:
+            print(f"[WARN] Error cargando track records: {e}")
+            print("   Sistema funcionara SIN filtro de track record")
+
+    def is_quality_insider(self, insider_name: str) -> bool:
+        """Verifica si un insider esta en la whitelist de calidad"""
+        if not self.quality_insiders:
+            # Si no hay whitelist, aceptar todos (fallback)
+            return True
+        return insider_name in self.quality_insiders
 
     def get_current_cash(self, strategy: str) -> float:
         """Obtiene cash disponible para una estrategia"""
@@ -383,6 +424,13 @@ class MultiTraderSystem:
 
             for opp in opportunities:
                 ticker = opp['ticker']
+
+                # LAYER 1: Filtro de Track Record (Month 1)
+                # Solo seguir trades de insiders con WR >= 60%
+                insider_name = opp.get('insider_name', '')
+                if insider_name and not self.is_quality_insider(insider_name):
+                    # Skip: Insider no tiene track record comprobado
+                    continue
 
                 if self.should_auto_buy(strategy_id, opp):
                     current_price = current_prices.get(ticker)
