@@ -1,0 +1,62 @@
+name: Trading Simulation Laboratory
+
+on:
+  schedule:
+    - cron: '30 14 * * 1-5'  # 2:30 PM UTC (9:30 AM ET - market open)
+    - cron: '0 17 * * 1-5'   # 5:00 PM UTC (12:00 PM ET - midday)
+    - cron: '30 20 * * 1-5'  # 8:30 PM UTC (3:30 PM ET - market close)
+  workflow_dispatch:  # Permite ejecutar manualmente
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run monitor
+      env:
+        MASSIVE_API_KEY: ${{ secrets.MASSIVE_API_KEY }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        RUN_SCHEDULE: weekdays
+      run: |
+        python daily_monitor.py
+
+    - name: Generate dashboard
+      run: |
+        python -m dashboard.generator
+
+    - name: Commit database changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add -f data/forward_testing.db
+        git diff --quiet && git diff --staged --quiet || git commit -m "DB update $(date +'%Y-%m-%d %H:%M')"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.8.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master
+
+    - name: Deploy dashboard to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dashboard/output

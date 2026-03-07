@@ -1,0 +1,50 @@
+name: Crypto Monitor
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # Midnight UTC
+    - cron: '0 6 * * *'   # 6 AM UTC
+    - cron: '0 12 * * *'  # Noon UTC
+    - cron: '0 18 * * *'  # 6 PM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run crypto strategies
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        RUN_SCHEDULE: daily
+      run: |
+        python daily_monitor.py
+
+    - name: Commit database changes
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add -f data/forward_testing.db
+        git diff --quiet && git diff --staged --quiet || git commit -m "Crypto update $(date +'%Y-%m-%d %H:%M')"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.8.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: master
