@@ -37,12 +37,12 @@
         <!-- Primary Stats -->
         <div class="stats-row">
             <div class="big-stat">
-                <div class="big-stat-value">$9,991</div>
+                <div class="big-stat-value">$9,983</div>
                 <div class="big-stat-label">Total Portfolio Value</div>
             </div>
             <div class="big-stat negative">
                 <div class="big-stat-value negative">
-                    -0.1%
+                    -0.2%
                 </div>
                 <div class="big-stat-label">Total Return</div>
             </div>
@@ -81,7 +81,7 @@
             
             <div class="metric negative">
                 <div class="metric-label">Max Drawdown</div>
-                <div class="metric-value negative">0.0%</div>
+                <div class="metric-value negative">-0.1%</div>
             </div>
             
             <div class="metric">
@@ -91,7 +91,7 @@
             
             <div class="metric">
                 <div class="metric-label">Invested</div>
-                <div class="metric-value">$9,363</div>
+                <div class="metric-value">$9,356</div>
             </div>
             
             
@@ -157,13 +157,13 @@
                 <div class="trade-card-header">
                     <span class="trade-card-ticker">SPY</span>
                     <span class="trade-card-return negative">
-                        -0.1%
+                        -0.2%
                     </span>
                 </div>
                 <div class="trade-card-details">
                     <span>Entry: $669.48</span>
-                    <span>Current: $668.81</span>
-                    <span>Days: 1</span>
+                    <span>Current: $668.25</span>
+                    <span>Days: 2</span>
                     <span>Shares: 14</span>
                 </div>
             </div>
@@ -193,17 +193,17 @@
                             </td>
                             <td style="text-align: left;">SPDR S&P 500 ETF Trust</td>
                             <td style="font-family: var(--font-mono); font-weight: 500;">$669.48</td>
-                            <td style="font-family: var(--font-mono); font-weight: 500;">$668.81</td>
+                            <td style="font-family: var(--font-mono); font-weight: 500;">$668.25</td>
                             <td>
                                 <span class="negative" style="font-family: var(--font-mono); font-weight: 700; font-size: 14px;">
-                                    -0.1%
+                                    -0.2%
                                 </span>
                                 <div class="perf-bar" style="width: 80px; margin-top: 4px;">
                                     <div class="perf-bar-fill negative" 
-                                         style="width: 0.49950049950042047%;"></div>
+                                         style="width: 0.9177362910110924%;"></div>
                                 </div>
                             </td>
-                            <td style="font-family: var(--font-mono);">1d</td>
+                            <td style="font-family: var(--font-mono);">2d</td>
                             <td style="font-family: var(--font-mono);">14</td>
                             <td style="color: var(--text-muted); font-size: 12px; text-align: left;">BENCHMARK</td>
                         </tr>
@@ -230,7 +230,7 @@
                 </svg>
             </span>
             Paper trading simulation only. No real money at risk.<br>
-            Last updated: 2026-03-09 15:35 UTC
+            Last updated: 2026-03-09 17:44 UTC
         </p>
     </footer>
 
@@ -239,7 +239,7 @@
     Chart.defaults.color = '#71717a';
     Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     
-    const snapshots = [{"date": "2026-03-09", "total": 9990.636660000002, "cash": 627.2966600000018, "invested": 9363.34, "return_pct": -0.0936333999999806}];
+    const snapshots = [{"date": "2026-03-09", "total": 9982.796660000002, "cash": 627.2966600000018, "invested": 9355.5, "return_pct": -0.17203339999998207}];
     
     if (snapshots.length > 0) {
         const ctx = document.getElementById('valueChart').getContext('2d');
