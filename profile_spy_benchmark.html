@@ -37,12 +37,12 @@
         <!-- Primary Stats -->
         <div class="stats-row">
             <div class="big-stat">
-                <div class="big-stat-value">$10,167</div>
+                <div class="big-stat-value">$10,108</div>
                 <div class="big-stat-label">Total Portfolio Value</div>
             </div>
             <div class="big-stat positive">
                 <div class="big-stat-value positive">
-                    +1.7%
+                    +1.1%
                 </div>
                 <div class="big-stat-label">Total Return</div>
             </div>
@@ -81,7 +81,7 @@
             
             <div class="metric negative">
                 <div class="metric-label">Max Drawdown</div>
-                <div class="metric-value negative">0.0%</div>
+                <div class="metric-value negative">-0.6%</div>
             </div>
             
             <div class="metric">
@@ -91,20 +91,27 @@
             
             <div class="metric">
                 <div class="metric-label">Invested</div>
-                <div class="metric-value">$9,540</div>
+                <div class="metric-value">$9,481</div>
             </div>
             
             
             <div class="metric">
                 <div class="metric-label">Sharpe Ratio</div>
-                <div class="metric-value positive">
-                    1.39
+                <div class="metric-value negative">
+                    -0.10
                 </div>
             </div>
             
             
             
             
+            
+            <div class="metric">
+                <div class="metric-label">Sortino Ratio</div>
+                <div class="metric-value negative">
+                    -0.18
+                </div>
+            </div>
             
         </section>
 
@@ -164,13 +171,13 @@
                 <div class="trade-card-header">
                     <span class="trade-card-ticker">SPY</span>
                     <span class="trade-card-return positive">
-                        1.8%
+                        1.2%
                     </span>
                 </div>
                 <div class="trade-card-details">
                     <span>Entry: $669.48</span>
-                    <span>Current: $681.44</span>
-                    <span>Days: 5</span>
+                    <span>Current: $677.18</span>
+                    <span>Days: 6</span>
                     <span>Shares: 14</span>
                 </div>
             </div>
@@ -200,17 +207,17 @@
                             </td>
                             <td style="text-align: left;">SPDR S&P 500 ETF Trust</td>
                             <td style="font-family: var(--font-mono); font-weight: 500;">$669.48</td>
-                            <td style="font-family: var(--font-mono); font-weight: 500;">$681.44</td>
+                            <td style="font-family: var(--font-mono); font-weight: 500;">$677.18</td>
                             <td>
                                 <span class="positive" style="font-family: var(--font-mono); font-weight: 700; font-size: 14px;">
-                                    +1.8%
+                                    +1.2%
                                 </span>
                                 <div class="perf-bar" style="width: 80px; margin-top: 4px;">
                                     <div class="perf-bar-fill positive" 
-                                         style="width: 8.933210298321628%;"></div>
+                                         style="width: 5.751630884329343%;"></div>
                                 </div>
                             </td>
-                            <td style="font-family: var(--font-mono);">5d</td>
+                            <td style="font-family: var(--font-mono);">6d</td>
                             <td style="font-family: var(--font-mono);">14</td>
                             <td style="color: var(--text-muted); font-size: 12px; text-align: left;">BENCHMARK</td>
                         </tr>
@@ -237,7 +244,7 @@
                 </svg>
             </span>
             Paper trading simulation only. No real money at risk.<br>
-            Last updated: 2026-03-10 17:44 UTC
+            Last updated: 2026-03-10 21:00 UTC
         </p>
     </footer>
 
@@ -246,7 +253,7 @@
     Chart.defaults.color = '#71717a';
     Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     
-    const snapshots = [{"date": "2026-03-09", "total": 10123.07666, "cash": 627.2966600000018, "invested": 9495.779999999999, "return_pct": 1.2307666000000062}, {"date": "2026-03-10", "total": 10167.456660000002, "cash": 627.2966600000018, "invested": 9540.16, "return_pct": 1.6745666000000166}];
+    const snapshots = [{"date": "2026-03-09", "total": 10123.07666, "cash": 627.2966600000018, "invested": 9495.779999999999, "return_pct": 1.2307666000000062}, {"date": "2026-03-10", "total": 10107.81666, "cash": 627.2966600000018, "invested": 9480.519999999999, "return_pct": 1.078166600000004}];
     
     if (snapshots.length > 0) {
         const ctx = document.getElementById('valueChart').getContext('2d');
