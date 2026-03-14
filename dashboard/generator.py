@@ -25,6 +25,37 @@ OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output')
 # DATA QUERIES
 # ============================================
 
+def get_system_status(conn):
+    """Get system execution status: last run date, days since last run."""
+    c = conn.cursor()
+    
+    # Last snapshot date across all profiles
+    c.execute("SELECT MAX(snapshot_date) FROM portfolio_snapshots")
+    row = c.fetchone()
+    last_snapshot = row[0] if row and row[0] else None
+    
+    # Last trade detection
+    c.execute("SELECT MAX(detection_date) FROM trades")
+    row = c.fetchone()
+    last_trade = row[0] if row and row[0] else None
+    
+    # Calculate days since last run
+    days_since_run = 0
+    last_run_date = last_snapshot or last_trade
+    if last_run_date:
+        try:
+            last_dt = datetime.strptime(str(last_run_date)[:10], '%Y-%m-%d')
+            days_since_run = (datetime.now() - last_dt).days
+        except (ValueError, TypeError):
+            pass
+    
+    return {
+        'last_run_date': last_run_date,
+        'days_since_run': days_since_run,
+        'is_stalled': days_since_run > 1,  # More than 1 day without running
+    }
+
+
 def get_leaderboard(conn):
     """Get all profiles sorted by return %."""
     c = conn.cursor()
@@ -62,6 +93,7 @@ def get_leaderboard(conn):
 
         # Last signal: most recent signal logged for this profile
         last_signal = '-'
+        last_signal_days = None
         try:
             c.execute("""
                 SELECT DATE(created_at) FROM signals_log
@@ -71,8 +103,23 @@ def get_leaderboard(conn):
             sig_row = c.fetchone()
             if sig_row and sig_row[0]:
                 last_signal = sig_row[0]
+                try:
+                    sig_dt = datetime.strptime(str(sig_row[0])[:10], '%Y-%m-%d')
+                    last_signal_days = (datetime.now() - sig_dt).days
+                except (ValueError, TypeError):
+                    pass
         except Exception:
             pass
+
+        # Check if profile is inactive (no trades and no signals ever)
+        c.execute("SELECT COUNT(*) FROM trades WHERE strategy=?", (pid,))
+        total_trades = c.fetchone()[0]
+        is_inactive = total_trades == 0 and last_signal == '-'
+        
+        # Check if profile is stalled (has trades but no recent activity)
+        is_stalled = False
+        if total_trades > 0 and last_signal_days is not None and last_signal_days > 7:
+            is_stalled = True
 
         leaderboard.append({
             'rank': i + 1,
@@ -93,10 +140,13 @@ def get_leaderboard(conn):
             'updated_at': row[8] or '',
             'days_active': days_active,
             'last_signal': last_signal,
+            'last_signal_days': last_signal_days,
             'sharpe_ratio': row[9],
             'max_drawdown': row[10],
             'profit_factor': row[11],
             'sortino_ratio': row[12],
+            'is_inactive': is_inactive,
+            'is_stalled': is_stalled,
         })
 
     return leaderboard
@@ -343,6 +393,7 @@ def generate_dashboard():
     conn = sqlite3.connect(DB_PATH)
 
     # Generate index page
+    system_status = get_system_status(conn)
     leaderboard = get_leaderboard(conn)
     return_curves = get_return_curves(conn)
     optimizer_log = get_optimizer_log(conn)
@@ -358,6 +409,7 @@ def generate_dashboard():
             retired_profiles=retired,
             updated_at=now,
             profile_count=len(leaderboard),
+            system_status=system_status,
         )
         with open(os.path.join(OUTPUT_DIR, 'index.html'), 'w', encoding='utf-8') as f:
             f.write(index_html)

@@ -210,7 +210,7 @@ class TradingEngine:
         conn = self.db.connect()
         c = conn.cursor()
         c.execute("""
-            SELECT t.id, t.strategy, t.ticker, t.entry_price, t.days_holding,
+            SELECT t.id, t.strategy, t.ticker, t.entry_price, t.detection_date,
                    e.shares, t.asset_type
             FROM trades t
             JOIN executions e ON e.trade_id = t.id AND e.action = 'BUY'
@@ -222,12 +222,18 @@ class TradingEngine:
         print(f"\nUpdating {len(active)} active trades...")
 
         for row in active:
-            trade_id, strategy, ticker, entry_price, days_held, shares, asset_type_str = row
-            days_held = (days_held or 0) + 1
+            trade_id, strategy, ticker, entry_price, detection_date, shares, asset_type_str = row
 
             profile = profile_map.get(strategy)
             if not profile:
                 continue
+
+            # Calculate days_held from detection_date (not incrementing each run)
+            try:
+                det_date = datetime.strptime(str(detection_date)[:10], '%Y-%m-%d')
+                days_held = (datetime.now() - det_date).days
+            except (ValueError, TypeError):
+                days_held = 0
 
             price = get_price(ticker, profile.asset_type)
             if not price:

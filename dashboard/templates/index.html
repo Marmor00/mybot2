@@ -32,6 +32,23 @@
     </header>
 
     <main>
+        <!-- System Status Warning -->
+        {% if system_status.is_stalled %}
+        <section class="system-warning">
+            <div class="warning-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <div class="warning-content">
+                <strong>Sistema sin ejecucion reciente</strong>
+                <p>Ultima ejecucion: {{ system_status.last_run_date }} (hace {{ system_status.days_since_run }} dias). Los datos pueden estar desactualizados.</p>
+            </div>
+        </section>
+        {% endif %}
+
         <!-- Hero Stats Section -->
         <section class="hero-stats">
             {% set best = leaderboard[0] if leaderboard else none %}
@@ -150,7 +167,13 @@
                data-profitable="{{ 'true' if p.return_pct > 0 else 'false' }}">
                 <div class="card-header">
                     <div class="card-rank {{ 'top-3' if p.rank <= 3 else '' }}">#{{ p.rank }}</div>
+                    {% if p.is_inactive %}
+                    <span class="card-status inactive">Sin actividad</span>
+                    {% elif p.is_stalled %}
+                    <span class="card-status stalled">Detenido</span>
+                    {% else %}
                     <span class="card-asset {{ p.asset_type | lower }}">{{ p.asset_type }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="card-name">{{ p.display_name }}</div>
