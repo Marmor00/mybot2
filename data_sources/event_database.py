@@ -24,6 +24,7 @@ import os
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
 import yfinance as yf
+import pandas as pd
 
 DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'events.db')
 
@@ -163,28 +164,44 @@ def add_event(event_type: str, event_date: str, title: str,
 def fetch_price_at_time(ticker: str, target_dt: datetime) -> Optional[float]:
     """
     Fetch the price of an asset at a specific datetime.
-    Uses yfinance with 1-hour intervals for precision.
+    Uses yfinance with daily data for reliability.
     """
     try:
-        # Fetch a range around the target time
-        start = target_dt - timedelta(hours=2)
-        end = target_dt + timedelta(hours=2)
+        # Fetch a range around the target time (use daily for more reliable data)
+        start = target_dt - timedelta(days=2)
+        end = target_dt + timedelta(days=3)
         
-        data = yf.download(ticker, start=start, end=end, interval='1h', progress=False)
-        if data.empty:
-            # Fallback to daily data
-            data = yf.download(ticker, start=start, end=end + timedelta(days=1), interval='1d', progress=False)
+        data = yf.download(ticker, start=start, end=end, interval='1d', progress=False)
         
         if data.empty:
             return None
         
-        # Find the closest price to target time
-        data.index = data.index.tz_localize(None) if data.index.tz else data.index
-        closest_idx = data.index.get_indexer([target_dt], method='nearest')[0]
+        # Handle multi-level columns from yfinance
+        if isinstance(data.columns, pd.MultiIndex):
+            data.columns = data.columns.get_level_values(0)
         
-        if closest_idx >= 0 and closest_idx < len(data):
-            return float(data['Close'].iloc[closest_idx])
-        return None
+        # Find the closest price to target date
+        data.index = data.index.tz_localize(None) if hasattr(data.index, 'tz') and data.index.tz else data.index
+        target_date = target_dt.replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        # Get the closest available date
+        if target_date in data.index:
+            price = data.loc[target_date, 'Close']
+        else:
+            # Find nearest date
+            closest_idx = data.index.get_indexer([target_date], method='nearest')[0]
+            if closest_idx >= 0 and closest_idx < len(data):
+                price = data['Close'].iloc[closest_idx]
+            else:
+                return None
+        
+        # Handle Series vs scalar
+        if hasattr(price, 'item'):
+            return float(price.item())
+        elif hasattr(price, 'iloc'):
+            return float(price.iloc[0])
+        else:
+            return float(price)
         
     except Exception as e:
         print(f"Error fetching price for {ticker}: {e}")
@@ -231,11 +248,14 @@ def calculate_price_reactions(event_id: int, force: bool = False):
     
     for asset_name, ticker in TRACKED_ASSETS.items():
         try:
-            # Fetch prices at different time windows
-            price_before = fetch_price_at_time(ticker, event_dt - timedelta(hours=1))
-            price_1h = fetch_price_at_time(ticker, event_dt + timedelta(hours=1))
-            price_4h = fetch_price_at_time(ticker, event_dt + timedelta(hours=4))
-            price_24h = fetch_price_at_time(ticker, event_dt + timedelta(hours=24))
+            # Fetch prices at different time windows (using daily data)
+            # price_before = day before event
+            # price_1h/4h = same day (approximation)
+            # price_24h = next day
+            price_before = fetch_price_at_time(ticker, event_dt - timedelta(days=1))
+            price_1h = fetch_price_at_time(ticker, event_dt)  # Same day close
+            price_4h = fetch_price_at_time(ticker, event_dt)  # Same day close
+            price_24h = fetch_price_at_time(ticker, event_dt + timedelta(days=1))
             
             if price_before is None:
                 print(f"  {asset_name}: No data available")
