@@ -37,12 +37,12 @@
         <!-- Primary Stats -->
         <div class="stats-row">
             <div class="big-stat">
-                <div class="big-stat-value">$9,902</div>
+                <div class="big-stat-value">$9,893</div>
                 <div class="big-stat-label">Total Portfolio Value</div>
             </div>
             <div class="big-stat negative">
                 <div class="big-stat-value negative">
-                    -1.0%
+                    -1.1%
                 </div>
                 <div class="big-stat-label">Total Return</div>
             </div>
@@ -81,7 +81,7 @@
             
             <div class="metric negative">
                 <div class="metric-label">Max Drawdown</div>
-                <div class="metric-value negative">-1.0%</div>
+                <div class="metric-value negative">-1.1%</div>
             </div>
             
             <div class="metric">
@@ -91,14 +91,14 @@
             
             <div class="metric">
                 <div class="metric-label">Invested</div>
-                <div class="metric-value">$1,801</div>
+                <div class="metric-value">$1,792</div>
             </div>
             
             
             <div class="metric">
                 <div class="metric-label">Sharpe Ratio</div>
                 <div class="metric-value negative">
-                    -0.23
+                    -0.25
                 </div>
             </div>
             
@@ -109,7 +109,7 @@
             <div class="metric">
                 <div class="metric-label">Sortino Ratio</div>
                 <div class="metric-value negative">
-                    -0.26
+                    -0.27
                 </div>
             </div>
             
@@ -171,13 +171,13 @@
                 <div class="trade-card-header">
                     <span class="trade-card-ticker">GS</span>
                     <span class="trade-card-return negative">
-                        -1.0%
+                        -2.2%
                     </span>
                 </div>
                 <div class="trade-card-details">
                     <span>Entry: $830.94</span>
-                    <span>Current: $822.64</span>
-                    <span>Days: 0</span>
+                    <span>Current: $812.33</span>
+                    <span>Days: 1</span>
                     <span>Shares: 1</span>
                 </div>
             </div>
@@ -186,13 +186,13 @@
                 <div class="trade-card-header">
                     <span class="trade-card-ticker">TSM</span>
                     <span class="trade-card-return negative">
-                        -7.2%
+                        -7.1%
                     </span>
                 </div>
                 <div class="trade-card-details">
                     <span>Entry: $351.49</span>
-                    <span>Current: $326.11</span>
-                    <span>Days: 16</span>
+                    <span>Current: $326.68</span>
+                    <span>Days: 17</span>
                     <span>Shares: 3</span>
                 </div>
             </div>
@@ -222,17 +222,17 @@
                             </td>
                             <td style="text-align: left;">The Goldman Sachs Group Inc</td>
                             <td style="font-family: var(--font-mono); font-weight: 500;">$830.94</td>
-                            <td style="font-family: var(--font-mono); font-weight: 500;">$822.64</td>
+                            <td style="font-family: var(--font-mono); font-weight: 500;">$812.33</td>
                             <td>
                                 <span class="negative" style="font-family: var(--font-mono); font-weight: 700; font-size: 14px;">
-                                    -1.0%
+                                    -2.2%
                                 </span>
                                 <div class="perf-bar" style="width: 80px; margin-top: 4px;">
                                     <div class="perf-bar-fill negative" 
-                                         style="width: 4.9944092842021455%;"></div>
+                                         style="width: 11.198225826407544%;"></div>
                                 </div>
                             </td>
-                            <td style="font-family: var(--font-mono);">0d</td>
+                            <td style="font-family: var(--font-mono);">1d</td>
                             <td style="font-family: var(--font-mono);">1</td>
                             <td style="color: var(--text-muted); font-size: 12px; text-align: left;">Dave McCormick</td>
                         </tr>
@@ -244,17 +244,17 @@
                             </td>
                             <td style="text-align: left;">Taiwan Semiconductor Manufactu...</td>
                             <td style="font-family: var(--font-mono); font-weight: 500;">$351.49</td>
-                            <td style="font-family: var(--font-mono); font-weight: 500;">$326.11</td>
+                            <td style="font-family: var(--font-mono); font-weight: 500;">$326.68</td>
                             <td>
                                 <span class="negative" style="font-family: var(--font-mono); font-weight: 700; font-size: 14px;">
-                                    -7.2%
+                                    -7.1%
                                 </span>
                                 <div class="perf-bar" style="width: 80px; margin-top: 4px;">
                                     <div class="perf-bar-fill negative" 
-                                         style="width: 36.104949900017345%;"></div>
+                                         style="width: 35.294118651184164%;"></div>
                                 </div>
                             </td>
-                            <td style="font-family: var(--font-mono);">16d</td>
+                            <td style="font-family: var(--font-mono);">17d</td>
                             <td style="font-family: var(--font-mono);">3</td>
                             <td style="color: var(--text-muted); font-size: 12px; text-align: left;">Gil Cisneros</td>
                         </tr>
@@ -281,7 +281,7 @@
                 </svg>
             </span>
             Paper trading simulation only. No real money at risk.<br>
-            Last updated: 2026-03-26 21:02 UTC
+            Last updated: 2026-03-27 15:28 UTC
         </p>
     </footer>
 
@@ -290,7 +290,7 @@
     Chart.defaults.color = '#71717a';
     Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     
-    const snapshots = [{"date": "2026-03-09", "total": 10000.0, "cash": 10000.0, "invested": 0.0, "return_pct": 0.0}, {"date": "2026-03-10", "total": 9979.846580000001, "cash": 8938.57658, "invested": 1041.27, "return_pct": -0.2015341999999873}, {"date": "2026-03-11", "total": 10002.256580000001, "cash": 8938.57658, "invested": 1063.68, "return_pct": 0.02256580000001122}, {"date": "2026-03-12", "total": 9948.70658, "cash": 8938.57658, "invested": 1010.1299999999999, "return_pct": -0.5129341999999997}, {"date": "2026-03-13", "total": 9953.506580000001, "cash": 8938.57658, "invested": 1014.9300000000001, "return_pct": -0.4649341999999888}, {"date": "2026-03-16", "total": 9959.266580000001, "cash": 8938.57658, "invested": 1020.69, "return_pct": -0.4073341999999866}, {"date": "2026-03-17", "total": 9976.516580000001, "cash": 8938.57658, "invested": 1037.94, "return_pct": -0.2348341999999866}, {"date": "2026-03-18", "total": 9957.28658, "cash": 8938.57658, "invested": 1018.71, "return_pct": -0.42713420000000046}, {"date": "2026-03-19", "total": 9954.946580000002, "cash": 8938.57658, "invested": 1016.3700000000001, "return_pct": -0.4505341999999837}, {"date": "2026-03-20", "total": 9926.29658, "cash": 8938.57658, "invested": 987.72, "return_pct": -0.7370341999999982}, {"date": "2026-03-23", "total": 9953.926580000001, "cash": 8938.57658, "invested": 1015.3499999999999, "return_pct": -0.46073419999998805}, {"date": "2026-03-24", "total": 9968.32658, "cash": 8938.57658, "invested": 1029.75, "return_pct": -0.3167341999999917}, {"date": "2026-03-25", "total": 9981.82658, "cash": 8938.57658, "invested": 1043.25, "return_pct": -0.18173419999999169}, {"date": "2026-03-26", "total": 9901.65647, "cash": 8100.686470000001, "invested": 1800.97, "return_pct": -0.9834353000000009}];
+    const snapshots = [{"date": "2026-03-09", "total": 10000.0, "cash": 10000.0, "invested": 0.0, "return_pct": 0.0}, {"date": "2026-03-10", "total": 9979.846580000001, "cash": 8938.57658, "invested": 1041.27, "return_pct": -0.2015341999999873}, {"date": "2026-03-11", "total": 10002.256580000001, "cash": 8938.57658, "invested": 1063.68, "return_pct": 0.02256580000001122}, {"date": "2026-03-12", "total": 9948.70658, "cash": 8938.57658, "invested": 1010.1299999999999, "return_pct": -0.5129341999999997}, {"date": "2026-03-13", "total": 9953.506580000001, "cash": 8938.57658, "invested": 1014.9300000000001, "return_pct": -0.4649341999999888}, {"date": "2026-03-16", "total": 9959.266580000001, "cash": 8938.57658, "invested": 1020.69, "return_pct": -0.4073341999999866}, {"date": "2026-03-17", "total": 9976.516580000001, "cash": 8938.57658, "invested": 1037.94, "return_pct": -0.2348341999999866}, {"date": "2026-03-18", "total": 9957.28658, "cash": 8938.57658, "invested": 1018.71, "return_pct": -0.42713420000000046}, {"date": "2026-03-19", "total": 9954.946580000002, "cash": 8938.57658, "invested": 1016.3700000000001, "return_pct": -0.4505341999999837}, {"date": "2026-03-20", "total": 9926.29658, "cash": 8938.57658, "invested": 987.72, "return_pct": -0.7370341999999982}, {"date": "2026-03-23", "total": 9953.926580000001, "cash": 8938.57658, "invested": 1015.3499999999999, "return_pct": -0.46073419999998805}, {"date": "2026-03-24", "total": 9968.32658, "cash": 8938.57658, "invested": 1029.75, "return_pct": -0.3167341999999917}, {"date": "2026-03-25", "total": 9981.82658, "cash": 8938.57658, "invested": 1043.25, "return_pct": -0.18173419999999169}, {"date": "2026-03-26", "total": 9901.65647, "cash": 8100.686470000001, "invested": 1800.97, "return_pct": -0.9834353000000009}, {"date": "2026-03-27", "total": 9893.05647, "cash": 8100.686470000001, "invested": 1792.37, "return_pct": -1.0694353000000048}];
     
     if (snapshots.length > 0) {
         const ctx = document.getElementById('valueChart').getContext('2d');
