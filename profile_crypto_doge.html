@@ -37,12 +37,12 @@
         <!-- Primary Stats -->
         <div class="stats-row">
             <div class="big-stat">
-                <div class="big-stat-value">$9,860</div>
+                <div class="big-stat-value">$9,512</div>
                 <div class="big-stat-label">Total Portfolio Value</div>
             </div>
             <div class="big-stat negative">
                 <div class="big-stat-value negative">
-                    -1.4%
+                    -4.9%
                 </div>
                 <div class="big-stat-label">Total Return</div>
             </div>
@@ -54,13 +54,13 @@
                 <div class="metric-label">Win Rate</div>
                 <div class="metric-value">0%</div>
                 <div class="perf-bar">
-                    <div class="perf-bar-fill positive" style="width: 0%;"></div>
+                    <div class="perf-bar-fill positive" style="width: 0.0%;"></div>
                 </div>
             </div>
             
             <div class="metric">
                 <div class="metric-label">Total Trades</div>
-                <div class="metric-value">0</div>
+                <div class="metric-value">1</div>
                 <div class="metric-subtitle">closed positions</div>
             </div>
             
@@ -71,45 +71,52 @@
             
             <div class="metric negative">
                 <div class="metric-label">Avg Loss</div>
-                <div class="metric-value negative">0.0%</div>
+                <div class="metric-value negative">-9.6%</div>
             </div>
             
             <div class="metric positive">
                 <div class="metric-label">Best Trade</div>
-                <div class="metric-value positive">+0.0%</div>
+                <div class="metric-value positive">+-9.6%</div>
             </div>
             
             <div class="metric negative">
                 <div class="metric-label">Max Drawdown</div>
-                <div class="metric-value negative">-8.6%</div>
+                <div class="metric-value negative">-11.8%</div>
             </div>
             
             <div class="metric">
                 <div class="metric-label">Cash Available</div>
-                <div class="metric-value">$5,000</div>
+                <div class="metric-value">$9,512</div>
             </div>
             
             <div class="metric">
                 <div class="metric-label">Invested</div>
-                <div class="metric-value">$4,860</div>
+                <div class="metric-value">$0</div>
             </div>
             
             
             <div class="metric">
                 <div class="metric-label">Sharpe Ratio</div>
                 <div class="metric-value negative">
-                    -0.01
+                    -0.05
                 </div>
             </div>
             
             
+            
+            <div class="metric">
+                <div class="metric-label">Profit Factor</div>
+                <div class="metric-value negative">
+                    0.00
+                </div>
+            </div>
             
             
             
             <div class="metric">
                 <div class="metric-label">Sortino Ratio</div>
                 <div class="metric-value negative">
-                    -0.02
+                    -0.07
                 </div>
             </div>
             
@@ -155,14 +162,21 @@
 
         <!-- Active Positions -->
         
+
+        <!-- Closed Trades -->
+        
         <section class="table-section">
             <h2>
-                <span class="icon" style="background: var(--success-bg); color: var(--success);">
+                <span class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <line x1="10" y1="9" x2="8" y2="9"></line>
                     </svg>
                 </span>
-                Active Positions (1)
+                Trade History (1)
             </h2>
             
             <!-- Mobile Cards -->
@@ -171,14 +185,14 @@
                 <div class="trade-card-header">
                     <span class="trade-card-ticker">DOGE</span>
                     <span class="trade-card-return negative">
-                        -2.7%
+                        -9.6%
                     </span>
                 </div>
                 <div class="trade-card-details">
                     <span>Entry: $0.10</span>
-                    <span>Current: $0.09</span>
+                    <span>Exit: $0.09</span>
                     <span>Days: 84</span>
-                    <span>Shares: 5.202e+04</span>
+                    <span>TIME_EXIT</span>
                 </div>
             </div>
             
@@ -189,46 +203,36 @@
                     <thead>
                         <tr>
                             <th style="text-align: left;">Ticker</th>
-                            <th style="text-align: left;">Company</th>
                             <th>Entry Price</th>
-                            <th>Current Price</th>
+                            <th>Exit Price</th>
                             <th>Return</th>
                             <th>Days Held</th>
-                            <th>Shares</th>
-                            <th style="text-align: left;">Insider/Source</th>
+                            <th style="text-align: left;">Exit Reason</th>
+                            <th>Exit Date</th>
                         </tr>
                     </thead>
                     <tbody>
                         
                         <tr>
-                            <td style="text-align: left;">
-                                <strong style="font-size: 14px;">DOGE</strong>
-                                <span class="status-active" style="margin-left: 8px;">LIVE</span>
-                            </td>
-                            <td style="text-align: left;">DOGE/USD</td>
+                            <td style="text-align: left;"><strong>DOGE</strong></td>
                             <td style="font-family: var(--font-mono); font-weight: 500;">$0.10</td>
                             <td style="font-family: var(--font-mono); font-weight: 500;">$0.09</td>
                             <td>
-                                <span class="negative" style="font-family: var(--font-mono); font-weight: 700; font-size: 14px;">
-                                    -2.7%
+                                <span class="negative" style="font-family: var(--font-mono); font-weight: 700;">
+                                    -9.6%
                                 </span>
-                                <div class="perf-bar" style="width: 80px; margin-top: 4px;">
-                                    <div class="perf-bar-fill negative" 
-                                         style="width: 13.520174742649376%;"></div>
-                                </div>
                             </td>
                             <td style="font-family: var(--font-mono);">84d</td>
-                            <td style="font-family: var(--font-mono);">5.202e+04</td>
-                            <td style="color: var(--text-muted); font-size: 12px; text-align: left;">MOMENTUM</td>
+                            <td style="text-align: left;">
+                                <span class="badge badge-time_exit">TIME_EXIT</span>
+                            </td>
+                            <td style="font-family: var(--font-mono); color: var(--text-muted);">2026-06-08</td>
                         </tr>
                         
                     </tbody>
                 </table>
             </div>
         </section>
-        
-
-        <!-- Closed Trades -->
         
 
         <!-- No trades message -->
@@ -244,7 +248,7 @@
                 </svg>
             </span>
             Paper trading simulation only. No real money at risk.<br>
-            Last updated: 2026-06-05 21:58 UTC
+            Last updated: 2026-06-08 17:35 UTC
         </p>
     </footer>
 
@@ -253,7 +257,7 @@
     Chart.defaults.color = '#71717a';
     Chart.defaults.font.family = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     
-    const snapshots = [{"date": "2026-03-08", "total": 10000.0, "cash": 10000.0, "invested": 0.0, "return_pct": 0.0}, {"date": "2026-03-09", "total": 10000.0, "cash": 10000.0, "invested": 0.0, "return_pct": 0.0}, {"date": "2026-03-10", "total": 9985.029940119759, "cash": 5000.0, "invested": 4985.02994011976, "return_pct": -0.14970059880241024}, {"date": "2026-03-11", "total": 9985.029940119759, "cash": 5000.0, "invested": 4985.02994011976, "return_pct": -0.14970059880241024}, {"date": "2026-03-12", "total": 9945.966546841208, "cash": 5000.0, "invested": 4945.966546841208, "return_pct": -0.5403345315879233}, {"date": "2026-03-13", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-14", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-15", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-16", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-17", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-18", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-19", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-20", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-21", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-22", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-23", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-24", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-25", "total": 10047.916281629441, "cash": 5000.0, "invested": 5047.91628162944, "return_pct": 0.4791628162944107}, {"date": "2026-03-26", "total": 10047.916281629441, "cash": 5000.0, "invested": 5047.91628162944, "return_pct": 0.4791628162944107}, {"date": "2026-03-27", "total": 10047.916281629441, "cash": 5000.0, "invested": 5047.91628162944, "return_pct": 0.4791628162944107}, {"date": "2026-03-28", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-03-29", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-03-30", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-03-31", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-01", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-02", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-03", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-04", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-05", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-06", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-07", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-08", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-09", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-10", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-11", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-12", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-13", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-14", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-15", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-16", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-17", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-18", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-19", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-20", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-21", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-22", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-23", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-24", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-25", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-26", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-27", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-28", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-29", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-04-30", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-01", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-02", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-03", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-04", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-05", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-06", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-07", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-08", "total": 10526.611898596846, "cash": 5000.0, "invested": 5526.611898596845, "return_pct": 5.266118985968459}, {"date": "2026-05-09", "total": 10526.611898596846, "cash": 5000.0, "invested": 5526.611898596845, "return_pct": 5.266118985968459}, {"date": "2026-05-10", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-11", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-12", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-13", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-14", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-15", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-16", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-17", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-18", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-19", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-20", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-21", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-22", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-23", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-24", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-25", "total": 10356.314229363848, "cash": 5000.0, "invested": 5356.3142293638475, "return_pct": 3.5631422936384842}, {"date": "2026-05-26", "total": 10356.314229363848, "cash": 5000.0, "invested": 5356.3142293638475, "return_pct": 3.5631422936384842}, {"date": "2026-05-27", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-28", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-29", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-30", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-31", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-06-01", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-06-02", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-03", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-04", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-05", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}];
+    const snapshots = [{"date": "2026-03-08", "total": 10000.0, "cash": 10000.0, "invested": 0.0, "return_pct": 0.0}, {"date": "2026-03-09", "total": 10000.0, "cash": 10000.0, "invested": 0.0, "return_pct": 0.0}, {"date": "2026-03-10", "total": 9985.029940119759, "cash": 5000.0, "invested": 4985.02994011976, "return_pct": -0.14970059880241024}, {"date": "2026-03-11", "total": 9985.029940119759, "cash": 5000.0, "invested": 4985.02994011976, "return_pct": -0.14970059880241024}, {"date": "2026-03-12", "total": 9945.966546841208, "cash": 5000.0, "invested": 4945.966546841208, "return_pct": -0.5403345315879233}, {"date": "2026-03-13", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-14", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-15", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-16", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-17", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-18", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-19", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-20", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-21", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-22", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-23", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-24", "total": 10026.069909889105, "cash": 5000.0, "invested": 5026.0699098891055, "return_pct": 0.26069909889105475}, {"date": "2026-03-25", "total": 10047.916281629441, "cash": 5000.0, "invested": 5047.91628162944, "return_pct": 0.4791628162944107}, {"date": "2026-03-26", "total": 10047.916281629441, "cash": 5000.0, "invested": 5047.91628162944, "return_pct": 0.4791628162944107}, {"date": "2026-03-27", "total": 10047.916281629441, "cash": 5000.0, "invested": 5047.91628162944, "return_pct": 0.4791628162944107}, {"date": "2026-03-28", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-03-29", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-03-30", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-03-31", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-01", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-02", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-03", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-04", "total": 9813.327861274884, "cash": 5000.0, "invested": 4813.327861274883, "return_pct": -1.8667213872511639}, {"date": "2026-04-05", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-06", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-07", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-08", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-09", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-10", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-11", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-12", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-13", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-14", "total": 9698.478364125689, "cash": 5000.0, "invested": 4698.478364125689, "return_pct": -3.0152163587431096}, {"date": "2026-04-15", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-16", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-17", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-18", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-19", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-20", "total": 9951.948291484394, "cash": 5000.0, "invested": 4951.948291484394, "return_pct": -0.48051708515606156}, {"date": "2026-04-21", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-22", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-23", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-24", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-25", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-26", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-27", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-28", "total": 9957.773990615151, "cash": 5000.0, "invested": 4957.77399061515, "return_pct": -0.42226009384849017}, {"date": "2026-04-29", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-04-30", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-01", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-02", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-03", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-04", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-05", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-06", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-07", "total": 10302.11442137949, "cash": 5000.0, "invested": 5302.1144213794905, "return_pct": 3.0211442137949054}, {"date": "2026-05-08", "total": 10526.611898596846, "cash": 5000.0, "invested": 5526.611898596845, "return_pct": 5.266118985968459}, {"date": "2026-05-09", "total": 10526.611898596846, "cash": 5000.0, "invested": 5526.611898596845, "return_pct": 5.266118985968459}, {"date": "2026-05-10", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-11", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-12", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-13", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-14", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-15", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-16", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-17", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-18", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-19", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-20", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-21", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-22", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-23", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-24", "total": 10786.999843673322, "cash": 5000.0, "invested": 5786.999843673323, "return_pct": 7.869998436733222}, {"date": "2026-05-25", "total": 10356.314229363848, "cash": 5000.0, "invested": 5356.3142293638475, "return_pct": 3.5631422936384842}, {"date": "2026-05-26", "total": 10356.314229363848, "cash": 5000.0, "invested": 5356.3142293638475, "return_pct": 3.5631422936384842}, {"date": "2026-05-27", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-28", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-29", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-30", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-05-31", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-06-01", "total": 10271.529500943021, "cash": 5000.0, "invested": 5271.529500943021, "return_pct": 2.7152950094302106}, {"date": "2026-06-02", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-03", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-04", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-05", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-06", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-07", "total": 9859.933454320933, "cash": 5000.0, "invested": 4859.9334543209325, "return_pct": -1.4006654567906662}, {"date": "2026-06-08", "total": 9512.167825390974, "cash": 9512.167825390974, "invested": 0.0, "return_pct": -4.8783217460902595}];
     
     if (snapshots.length > 0) {
         const ctx = document.getElementById('valueChart').getContext('2d');
